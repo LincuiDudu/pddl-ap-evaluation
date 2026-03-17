@@ -1,0 +1,26 @@
+# PDDL Attack path generation
+
+The following are examples of *attack paths* generated from *informal descriptions* expressed in *natural language*.
+The paths, written using the *PDDL* language, should allow to verify via AI planning whether the described attack is feasible or not.
+
+---
+
+{% for cve in cves %}## {{ cve.id }}
+
+### Description
+
+{{ cve.description }}
+
+### Domain
+
+```pddl
+{% if cve.domain %}{{ cve.domain }}
+```
+
+### Attack
+
+```pddl
+{% if cve.attack %}{{ cve.attack }}
+```
+
+{% endif %}{% endif %}{% endfor %}
