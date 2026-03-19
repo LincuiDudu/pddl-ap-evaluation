@@ -3,6 +3,14 @@
 The following are examples of *attack paths* generated from *informal descriptions* expressed in *natural language*.
 The paths, written using the *PDDL* language, should allow to verify via AI planning whether the described attack is feasible or not.
 
+For each (CVE) reported hereafter we have:
+- **Description**: natural language description of the exploit to
+- **Domain**: ...
+- **Goal**: PDDL formulation of the
+- **Problem**: ...
+
+[PDDL structure]
+
 ---
 
 {% for cve in cves %}## {{ cve.id }}
@@ -17,10 +25,16 @@ The paths, written using the *PDDL* language, should allow to verify via AI plan
 {% if cve.domain %}{{ cve.domain }}
 ```
 
-### Attack
+### Goal
 
 ```pddl
-{% if cve.attack %}{{ cve.attack }}
+{% if cve.goal %}{{ cve.goal }}
 ```
 
-{% endif %}{% endif %}{% endfor %}
+### Problem
+
+```pddl
+{% if cve.problem %}{{ cve.problem }}
+```
+
+{% endif %}{% endif %}{% endif %}{% endfor %}
