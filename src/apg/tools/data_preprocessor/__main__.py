@@ -44,7 +44,7 @@ def parse_arguments() -> Namespace:
     parser = ArgumentParser(description='Command line tool to preprocess PDDL files')
 
     parser.add_argument(
-        'data_path',
+        '--data_path',
         type=str,
         default=DEFAULT_DATA_PATH,
         help='Path to the directory with the PDDL files'
