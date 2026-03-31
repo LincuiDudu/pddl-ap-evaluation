@@ -9,7 +9,6 @@ Solve in order and move to next phase as soon as previous is done.
     - Remove comments
     - Remove empty lines
     - Standardize intentation and parentheses
-    - [ ] Qs. Should lines such as `;2. Application accepts user-supplied XML or JSON input through exposed endpoints`, explaining the semantics of predicate combinations also be removed? It is hard to decide whether it is useful or not for LLMs.
 - [ ] Interfaces to LLMs
     - Look into Marco's code
 - [ ] Evaluation notebook (prompt and attack path)
