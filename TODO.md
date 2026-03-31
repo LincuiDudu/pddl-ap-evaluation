@@ -4,11 +4,12 @@ Solve in order and move to next phase as soon as previous is done.
 
 - [ ] Stardardise data automatically to latest PDDL standards
     - Do it (semi)automatically with CLI AI-tools (Coder, Claude, ...)
-- [ ] Data cleaninig and preprocessing tool
+- [x] Data cleaninig and preprocessing tool
     - Remove unused lines of code
     - Remove comments
     - Remove empty lines
     - Standardize intentation and parentheses
+    - [ ] Qs. Should lines such as `;2. Application accepts user-supplied XML or JSON input through exposed endpoints`, explaining the semantics of predicate combinations also be removed?
 - [ ] Interfaces to LLMs
     - Look into Marco's code
 - [ ] Evaluation notebook (prompt and attack path)
