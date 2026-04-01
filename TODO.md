@@ -18,9 +18,8 @@ Solve in order and move to next phase as soon as previous is done.
   - [x] For the external planner, use Metric-FF and ENHSP  
     - Planner support:  
         - Fast Downward ❌  
-        - Metric-FF ✅  
-        - ENHSP ✅  
-        - OPTIC / COLIN / TFD ...
+        - Metric-FF ✅
+        - [ENHSP](https://sites.google.com/view/enhsp/home) ✅ 
     - Done:  
         - Validated all `domain.pddl` and `problem.pddl` using Metric-FF and ENHSP  
 - [x] Data cleaninig and preprocessing tool
