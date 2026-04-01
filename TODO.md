@@ -21,7 +21,7 @@ Solve in order and move to next phase as soon as previous is done.
         - Metric-FF ✅
         - [ENHSP](https://sites.google.com/view/enhsp/home) ✅
     - Done:  
-        - Validated all `domain.pddl` and `problem.pddl` using Metric-FF (1. `:fluents`； 2. `(:functions)` → `(:predicates)` construct)
+        - Validated all `domain.pddl` and `problem.pddl` using Metric-FF (1. `:fluents`)
         - Based on ENHSP’s requirements (1. `:numeric-fluents`; 2.`(:predicates)` → `(:functions)` construct), modified domain.pddl, and validated all domain.pddl and problem.pddl files using ENHSP.
 - [x] Data cleaninig and preprocessing tool
     - Remove unused lines of code
