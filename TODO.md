@@ -17,7 +17,7 @@ Solve in order and move to next phase as soon as previous is done.
         - Revised them to strictly comply with PDDL 2.1 syntax (Previously only validated with Metric-FF, which may ignore some errors)
   - [x] For the external planner, use Metric-FF and ENHSP  
     - Planner support:  
-        - Fast Downward ❌  
+        - Fast Downward ❌: doesn't support numerical freatures.  
         - Metric-FF ✅
         - [ENHSP](https://sites.google.com/view/enhsp/home) ✅ 
     - Done:  
