@@ -3,8 +3,7 @@
 Solve in order and move to next phase as soon as previous is done.
 - [x] Stardardise data automatically to latest PDDL standards
     - Do it (semi)automatically with CLI AI-tools (Coder, Claude, ...)
-    - [x] Standardise data automatically to latest PDDL standards  
-  - [x] For the syntax standard of PDDL, keep PDDL 2.1 syntax
+  - For the syntax standard of PDDL, keep PDDL 2.1 syntax
      - Reason:  
         - The domain **requires numerical planning support** for modeling security features, e.g.:  
             - `(:functions (version ...) (port ...) (total-cost))`  
@@ -12,15 +11,15 @@ Solve in order and move to next phase as soon as previous is done.
             - numeric effects: `(increase (total-cost) ...)`  
         - PDDL 2.1 was selected as it provides sufficient expressiveness for these requirements while remaining compatible with existing planners  
         - Planner implementations do not fully support newer PDDL versions, higher versions would impede validation with external planners 
-     - Done:  
+     - [x] Done:  
         - Rechecked all `domain.pddl` and `problem.pddl` files  
         - Revised them to strictly comply with PDDL 2.1 syntax (Previously only validated with Metric-FF, which may ignore some errors)
-  - [x] For the external planner, use Metric-FF to validate the solvability.
+  - For the external planner, use Metric-FF to validate the solvability.
     - Planner support:  
         - Fast Downward ❌: doesn't support numerical freatures.  
         - Metric-FF ✅
         - [ENHSP](https://sites.google.com/view/enhsp/home): Much slower than Metric-FF; its grounding strategy is less advanced than that of Metric-FF. ❌
-    - Done:  
+    - [x] Done:  
         - Validated all `domain.pddl` and `problem.pddl` using Metric-FF (1. `:fluents`)
         - Based on ENHSP’s requirements (1. `:numeric-fluents`; 2.`(:predicates)` → `(:functions)` construct), modified domain.pddl, and validated all domain.pddl and problem.pddl files using ENHSP.
           - Timeout at grounding stage, ENHSP is too slow in most cases.
