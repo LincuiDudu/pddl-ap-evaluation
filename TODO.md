@@ -20,9 +20,11 @@ Solve in order and move to next phase as soon as previous is done.
         - Metric-FF ✅
         - [ENHSP](https://sites.google.com/view/enhsp/home): Much slower than Metric-FF; its grounding strategy is less advanced than that of Metric-FF. ❌
     - [x] Done:  
-        - Validated all `domain.pddl` and `problem.pddl` using Metric-FF (1. `:fluents`)
-        - Based on ENHSP’s requirements (1. `:numeric-fluents`; 2.`(:predicates)` → `(:functions)` construct), modified domain.pddl, and validated all domain.pddl and problem.pddl files using ENHSP.
-          - Timeout at grounding stage, ENHSP is too slow in most cases.
+        - Validated the solvabillity of all `domain.pddl` and `problem.pddl` using Metric-FF (1. `:fluents`)
+        - Based on ENHSP’s requirements (1. `:numeric-fluents`; 2.`(:predicates)` → `(:functions)` construct), modified domain.pddl
+          - syntax validation ✅
+          - solvability validation ✅
+            - problem: timeout at grounding stage, ENHSP is too slow in most cases.
 - [x] Data cleaninig and preprocessing tool
     - Remove unused lines of code
     - Remove comments
