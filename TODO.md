@@ -14,14 +14,15 @@ Solve in order and move to next phase as soon as previous is done.
         - Planner implementations do not fully support newer PDDL versions, higher versions would impede validation with external planners 
      - Done:  
         - Rechecked all `domain.pddl` and `problem.pddl` files  
-        - Revised them to *strictly comply with PDDL 2.1 syntax (Previously only validated with Metric-FF, which may ignore some errors)
+        - Revised them to strictly comply with PDDL 2.1 syntax (Previously only validated with Metric-FF, which may ignore some errors)
   - [x] For the external planner, use Metric-FF and ENHSP  
     - Planner support:  
         - Fast Downward ❌  
         - Metric-FF ✅
         - [ENHSP](https://sites.google.com/view/enhsp/home) ✅ 
     - Done:  
-        - Validated all `domain.pddl` and `problem.pddl` using Metric-FF and ENHSP  
+        - Validated all `domain.pddl` and `problem.pddl` using Metric-FF (`:fluents`)
+        - Based on ENHSP’s syntax support (`:numeric-fluents`, `(:predicates)` befor `(:functions)` construct), modified domain.pddl, and validated all domain.pddl and problem.pddl files using ENHSP.
 - [x] Data cleaninig and preprocessing tool
     - Remove unused lines of code
     - Remove comments
