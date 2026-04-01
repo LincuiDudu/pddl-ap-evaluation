@@ -1,9 +1,28 @@
 # TODOs
 
 Solve in order and move to next phase as soon as previous is done.
-
-- [ ] Stardardise data automatically to latest PDDL standards
+- [x] Stardardise data automatically to latest PDDL standards
     - Do it (semi)automatically with CLI AI-tools (Coder, Claude, ...)
+    - [x] Standardise data automatically to latest PDDL standards  
+  - [x] For the syntax standard of PDDL, keep PDDL 2.1 syntax
+     - Reason:  
+        - The domain **requires numerical planning support** for modeling security features, e.g.:  
+            - `(:functions (version ...) (port ...) (total-cost))`  
+            - numeric conditions: `>=`, `<=`, `=`, ...
+            - numeric effects: `(increase (total-cost) ...)`  
+        - PDDL 2.1 was selected as it provides sufficient expressiveness for these requirements while remaining compatible with existing planners  
+        - Planner implementations do not fully support newer PDDL versions, higher versions would impede validation with external planners 
+     - Done:  
+        - Rechecked all `domain.pddl` and `problem.pddl` files  
+        - Revised them to *strictly comply with PDDL 2.1 syntax (Previously only validated with Metric-FF, which may ignore some errors)
+  - [x] For the external planner, use Metric-FF and ENHSP  
+    - Planner support:  
+        - Fast Downward ❌  
+        - Metric-FF ✅  
+        - ENHSP ✅  
+        - OPTIC / COLIN / TFD ...
+    - Done:  
+        - Validated all `domain.pddl` and `problem.pddl` using Metric-FF and ENHSP  
 - [x] Data cleaninig and preprocessing tool
     - Remove unused lines of code
     - Remove comments
