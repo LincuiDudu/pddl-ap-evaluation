@@ -20,17 +20,9 @@ Solve in order and move to next phase as soon as previous is done.
         - Fast Downward ❌: doesn't support numerical freatures.  
         - Metric-FF ✅
         - [ENHSP](https://sites.google.com/view/enhsp/home) ✅
-     
-        -   │              │       domain.pddl        │    domain-enhsp.pddl     │                                                        
-  ├──────────────┼──────────────────────────┼──────────────────────────┤                                                        
-  │ Requirement  │ :fluents                 │ :numeric-fluents         │                                                        
-  ├──────────────┼──────────────────────────┼──────────────────────────┤                                                        
-  │ Section │ :functions → :predicates │ :predicates → :functions │                                                        
-  ├──────────────┼──────────────────────────┼──────────────────────────┤
-  │ For         │ Metric-FF                │ ENHSP                    │    
     - Done:  
-        - Validated all `domain.pddl` and `problem.pddl` using Metric-FF (`:fluents`)
-        - Based on ENHSP’s requirements (1. `:numeric-fluents`; 2.`(:predicates)` befor `(:functions)` construct), modified domain.pddl, and validated all domain.pddl and problem.pddl files using ENHSP.
+        - Validated all `domain.pddl` and `problem.pddl` using Metric-FF (1. `:fluents`； 2. `(:functions)` → `(:predicates)` construct)
+        - Based on ENHSP’s requirements (1. `:numeric-fluents`; 2.`(:predicates)` → `(:functions)` construct), modified domain.pddl, and validated all domain.pddl and problem.pddl files using ENHSP.
 - [x] Data cleaninig and preprocessing tool
     - Remove unused lines of code
     - Remove comments
