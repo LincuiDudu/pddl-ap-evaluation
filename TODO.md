@@ -15,7 +15,7 @@ Solve in order and move to next phase as soon as previous is done.
      - Done:  
         - Rechecked all `domain.pddl` and `problem.pddl` files  
         - Revised them to strictly comply with PDDL 2.1 syntax (Previously only validated with Metric-FF, which may ignore some errors)
-  - [x] For the external planner, use Metric-FF and ENHSP  
+  - [x] For the external planner, use Metric-FF to validate the solvability.
     - Planner support:  
         - Fast Downward ❌: doesn't support numerical freatures.  
         - Metric-FF ✅
