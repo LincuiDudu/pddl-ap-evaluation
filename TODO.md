@@ -19,7 +19,7 @@ Solve in order and move to next phase as soon as previous is done.
     - Planner support:  
         - Fast Downward ❌: doesn't support numerical freatures.  
         - Metric-FF ✅
-        - [ENHSP](https://sites.google.com/view/enhsp/home) ✅
+        - [ENHSP](https://sites.google.com/view/enhsp/home) ✅ (lower than Metric-FF)
     - Done:  
         - Validated all `domain.pddl` and `problem.pddl` using Metric-FF (1. `:fluents`)
         - Based on ENHSP’s requirements (1. `:numeric-fluents`; 2.`(:predicates)` → `(:functions)` construct), modified domain.pddl, and validated all domain.pddl and problem.pddl files using ENHSP.
