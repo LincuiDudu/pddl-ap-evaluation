@@ -3,7 +3,7 @@
 Solve in order and move to next phase as soon as previous is done.
 - [x] Stardardise data automatically to latest PDDL standards
     - Do it (semi)automatically with CLI AI-tools (Coder, Claude, ...)
-  - For the syntax standard of PDDL, keep PDDL 2.1 syntax
+  - For the syntax standard of PDDL, keep the current PDDL 2.1 syntax
      - Reason:  
         - The domain **requires numerical planning support** for modeling security features, e.g.:  
             - `(:functions (version ...) (port ...) (total-cost))`  
