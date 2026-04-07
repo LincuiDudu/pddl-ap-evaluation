@@ -34,12 +34,13 @@ Solve in order and move to next phase as soon as previous is done.
 - [x] Interfaces to LLMs
     - Look into Marco's code
     - [x] Done:
-          - Built Jinja2 template system supporting both zero-shot and few-shot prompts with unified instruction visibility control;
-          - Conducted instruction ablation using Claude Opus (large model, simulated) and Qwen (mid-tier model, actual outputs): zero-shot ablation (baseline + single instruction, 16 rounds), cross-model validation (64 Qwen output combinations), and few-shot ablation (2-shot + individual BMI removal). 3 types of instructions :
+          - Built Jinja2 template system supporting both zero-shot and few-shot prompts with unified instruction visibility control
+          - Conducted instruction ablation using Claude Opus (large model, simulated) and Qwen (mid-tier model, actual outputs): zero-shot ablation (baseline + single instruction, 16 rounds), cross-model validation (64 Qwen output combinations), and few-shot ablation (2-shot + individual BMI removal). 3 types of instructions:
              - BMI 6 (high value for all models, always-on),
              - SMI 5 (high value for weaker models, always-on in zero-shot, optional in few-shot),
-             - OI 3 (low value, always optional).                                                                                        
-         - Audited 55 reference `domain.pddl` files against BMI/SMI compliance: softened instructions wording or slightly revised `domain.pddl` 
+             - OI 3 (low value, always optional).   
+          - Audited 55 reference `domain.pddl` files against BMI/SMI compliance: softened instructions wording or slightly revised `domain.pddl`                                                                                     
+
 - [ ] Evaluation notebook (prompt and attack path)
     - Prepare code to simulate and test different evaluation strategies
     - Look into all the mentioned metrics and implement them
