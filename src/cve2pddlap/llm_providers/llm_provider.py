@@ -24,9 +24,19 @@ def _is_retryable(exc: BaseException) -> bool:
 class LLMProvider(ABC):
     """Base class for all LLM providers."""
 
-    def __init__(self, model: str, max_tokens: int = 4096):
+    def __init__(
+        self,
+        model: str,
+        max_tokens: int = 4096,
+        temperature: float | None = None,
+        seed: int | None = None,
+        top_p: float | None = None,
+    ):
         self.model = model
         self.max_tokens = max_tokens
+        self.temperature = temperature  # None = provider default; 0.0 = deterministic
+        self.seed = seed                # None = provider default; fixed int = reproducible
+        self.top_p = top_p              # None = provider default; 1.0 = no nucleus sampling
         self.last_prompt: list[dict] | None = None
         self.last_duration: float | None = None
 
@@ -64,4 +74,11 @@ class LLMProvider(ABC):
         ...
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}(model={self.model!r})"
+        parts = [f"model={self.model!r}"]
+        if self.temperature is not None:
+            parts.append(f"temperature={self.temperature}")
+        if self.seed is not None:
+            parts.append(f"seed={self.seed}")
+        if self.top_p is not None:
+            parts.append(f"top_p={self.top_p}")
+        return f"{self.__class__.__name__}({', '.join(parts)})"

@@ -15,39 +15,44 @@ class OpenAICompatProvider(LLMProvider):
     """Base for any provider using OpenAI-compatible chat API."""
 
     def __init__(self, provider_name: str, model: str, max_tokens: int = 4096,
-                 base_url: str | None = None):
-        super().__init__(model, max_tokens)
+                 base_url: str | None = None, temperature: float | None = None):
+        super().__init__(model, max_tokens, temperature)
         api_key = get_api_key(provider_name)
         self.client = OpenAI(api_key=api_key, base_url=base_url)
 
     def _send_impl(self, messages: list[dict[str, str]]) -> str:
-        # OpenAI API accepts messages list directly (system + user + assistant...)
-        response = self.client.chat.completions.create(
-            model=self.model,
-            messages=messages,
-            max_tokens=self.max_tokens,
-        )
+        kwargs = dict(model=self.model, messages=messages, max_tokens=self.max_tokens)
+        if self.temperature is not None:
+            kwargs["temperature"] = self.temperature
+        response = self.client.chat.completions.create(**kwargs)
         return response.choices[0].message.content
 
 
 class DeepSeekProvider(OpenAICompatProvider):
-    def __init__(self, model: str = "deepseek-chat", max_tokens: int = 4096):
+    def __init__(self, model: str = "deepseek-chat", max_tokens: int = 4096,
+                 temperature: float | None = None):
         super().__init__("deepseek", model, max_tokens,
-                         base_url=settings.LLM.endpoints.deepseek)
+                         base_url=settings.LLM.endpoints.deepseek,
+                         temperature=temperature)
 
 
 class QwenProvider(OpenAICompatProvider):
-    def __init__(self, model: str = "qwen-plus", max_tokens: int = 4096):
+    def __init__(self, model: str = "qwen-plus", max_tokens: int = 4096,
+                 temperature: float | None = None):
         super().__init__("qwen", model, max_tokens,
-                         base_url=settings.LLM.endpoints.qwen)
+                         base_url=settings.LLM.endpoints.qwen,
+                         temperature=temperature)
 
 
 class ZhipuProvider(OpenAICompatProvider):
-    def __init__(self, model: str = "glm-4-flash", max_tokens: int = 4096):
+    def __init__(self, model: str = "glm-4-flash", max_tokens: int = 4096,
+                 temperature: float | None = None):
         super().__init__("zhipu", model, max_tokens,
-                         base_url=settings.LLM.endpoints.zhipu)
+                         base_url=settings.LLM.endpoints.zhipu,
+                         temperature=temperature)
 
 
 class GPT4Provider(OpenAICompatProvider):
-    def __init__(self, model: str = "gpt-4o", max_tokens: int = 4096):
-        super().__init__("gpt4", model, max_tokens)
+    def __init__(self, model: str = "gpt-4o", max_tokens: int = 4096,
+                 temperature: float | None = None):
+        super().__init__("gpt4", model, max_tokens, temperature=temperature)

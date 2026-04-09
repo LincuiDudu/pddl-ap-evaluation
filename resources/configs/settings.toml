@@ -5,17 +5,32 @@ model_host = "deepseek"
 max_tokens = 4096
 
 [default.LLM.models]
-gemini = "gemini-2.0-flash"
-deepseek = "deepseek-chat"
-qwen = "qwen-plus"
-zhipu = "glm-4-flash"
-claude = "claude-sonnet-4-20250514"
-gpt4 = "gpt-4o"
+# Remote models
+gemini    = "gemini-2.0-flash"
+deepseek  = "deepseek-chat"
+qwen      = "qwen-plus"
+zhipu     = "glm-4-flash"
+claude    = "claude-sonnet-4-20250514"
+gpt4      = "gpt-4o"
+# Local models (served via vLLM)
+# Pin revision= at vLLM server start for full reproducibility, e.g.:
+#   --revision a1b2c3d  (commit hash from huggingface.co/Qwen/Qwen2.5-7B-Instruct/commits)
+qwen3b       = "Qwen/Qwen2.5-3B-Instruct"
+qwen7b       = "Qwen/Qwen2.5-7B-Instruct"
+qwen14b      = "Qwen/Qwen2.5-14B-Instruct"
+qwen7b_coder = "Qwen/Qwen2.5-Coder-7B-Instruct"
 
 [default.LLM.endpoints]
 deepseek = "https://api.deepseek.com"
-qwen = "https://dashscope.aliyuncs.com/compatible-mode/v1"
-zhipu = "https://open.bigmodel.cn/api/paas/v4"
+qwen     = "https://dashscope.aliyuncs.com/compatible-mode/v1"
+zhipu    = "https://open.bigmodel.cn/api/paas/v4"
+vllm     = "http://localhost:8000/v1"
+
+# Reproducibility defaults for local (vLLM) inference
+[default.LLM.local]
+temperature = 0.0
+top_p       = 1.0
+seed        = 42
 
 [default.Generation]
 system_prompt_template = "resources/prompt/generation/context.jinja"
@@ -26,9 +41,9 @@ mode = "none"          # "none", "random", "fixed"
 num_examples = 0       # 0 = zero-shot, 2-5 recommended for few-shot
 dataset_dir = "resources/data/CVE-PDDL-NNL-ReAP"
 seed = 42
-# fixed_cves = ["CVE-2022-1471", "CVE-2023-6378"]  # used when mode = "fixed"
+# fixed_keys = ["CVE-2022-1471 / AP1", "CVE-2023-6378 / AP1"]  # used when mode = "fixed"
 
 [default.Experiment]
-input_file = "resources/data/cve_list.json"
+input_file = "resources/data/target_pool.json"
 output_dir = "experiments"
 max_optional = 3
