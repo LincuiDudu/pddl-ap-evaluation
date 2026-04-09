@@ -1,0 +1,34 @@
+[default]
+
+[default.LLM]
+model_host = "deepseek"
+max_tokens = 4096
+
+[default.LLM.models]
+gemini = "gemini-2.0-flash"
+deepseek = "deepseek-chat"
+qwen = "qwen-plus"
+zhipu = "glm-4-flash"
+claude = "claude-sonnet-4-20250514"
+gpt4 = "gpt-4o"
+
+[default.LLM.endpoints]
+deepseek = "https://api.deepseek.com"
+qwen = "https://dashscope.aliyuncs.com/compatible-mode/v1"
+zhipu = "https://open.bigmodel.cn/api/paas/v4"
+
+[default.Generation]
+system_prompt_template = "resources/prompt/generation/context.jinja"
+query_template = "resources/prompt/generation/query.jinja"
+
+[default.FewShot]
+mode = "none"          # "none", "random", "fixed"
+num_examples = 0       # 0 = zero-shot, 2-5 recommended for few-shot
+dataset_dir = "resources/data/CVE-PDDL-NNL-ReAP"
+seed = 42
+# fixed_cves = ["CVE-2022-1471", "CVE-2023-6378"]  # used when mode = "fixed"
+
+[default.Experiment]
+input_file = "resources/data/cve_list.json"
+output_dir = "experiments"
+max_optional = 3

@@ -2,3 +2,11 @@ Jinja2
 tarski
 jupyterlab
 ipywidgets
+anthropic>=0.80
+google-genai>=1.0
+openai>=1.0
+pydantic>=2.0
+python-dotenv>=1.0
+tenacity>=8.0
+tqdm>=4.60
+tomli>=2.0

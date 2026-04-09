@@ -1,0 +1,83 @@
+(define (domain Adversarial-Environment-Domain)
+(:requirements :equality :strips :typing :disjunctive-preconditions :adl :existential-preconditions)
+(:types
+  attacker target-system user infrastructure
+  cve-identifier
+  exploit-technique
+  ...)
+(:predicates
+ (exposes-attack-surface ?Target - target-system ?CVEID - cve-identifier)
+ (exploit-by ?CVEID - cve-identifier ?ExploitTechnique- exploit-technique)
+ (vulnerable-<element> ?Xx ...)  ;the vulnerable component(vulnerable-<element> ?Xx ...)  ;the vulnerable component
+ (spoofing ?Target - target-system) (tampering ?Target - target-system) (repudiation ?Target - target-system) (information-disclosure ?Target - target-system)  (denial-of-service ?Target - target-system) (elevation-of-privilege ?Target - target-system)
+ ...)
+(:constants
+  <CVE-XXXX-XXXXX> - cve-identifier
+  <exploit-technique> - exploit-technique
+  ...)
+(:functions
+(version ?O) ;;returns <N_version> encoding "major.minor.patch-milestone" as: major × 10^9 + minor × 10^6 + patch × 10^3 + milestone
+(port ?P) ;return the opened port
+(total-cost) ;;accumulates action costs for plan optimization
+  ...)
+;Step 0: The system exposes the attack surfaces to attackers via <CVE-xxxx-xxxxx>
+(:action system-exposes-attack-surface-to-attackers-<CVE-xxxx-xxxxx>
+  :parameters (
+    ?Target - target-system        ;the exposed system
+    ?Xx  - [typexx]                ;[parameter description]
+    ?Yy  - [typeyy]                ;[parameter description]
+    ...)
+  :precondition (and
+    ;(i) System technical composition
+    (has-<?Xx> ?Target ?Xx)
+    (⊗ (version ?Xx) <N_version>) ;; where ⊗ ∈ {=, ≤, ≥}
+    ...
+    ;(ii) System permissions and access paths
+    ([predicate_1] ?Xx ...)   ;[predicate description]
+    ...
+    ;(iii) Security controls and configurations
+    (not ([predicate_2] ?Xx ...)) ;[predicate description]
+    ...
+    ;;(iv+) [other decidable and observable conditions
+    ;        characterizing vulnerability exposure]
+    ...)
+  :effect (and
+    (exposed-attack-surface ?Target <CVE-XXXX-XXXXX>)
+    (exploit-by <CVE-XXXX-XXXXX> <exploit-technique>)
+    (vulnerable-<element> ?Xx ...)  ;the vulnerable component
+    ...
+    (increase (total-cost) <int>))) ;; where <int> = max(1, -100 × ln(max(δ, 0.1 × CVSS))), δ = 10^-6
+
+;Step 1 to Step N-1: intermediate atomic step-wise attack actions
+(:action [<actor>-verb-...]
+  :parameters (
+    ?Xx - [typexx]            ;[parameter description]
+    ?Yy - [typeyy]            ;[parameter description]
+    ...)
+  :precondition (and
+    ([predicate_i] ?Xx ...)   ;[predicate description]
+    ([predicate_j] ?Yy ...)   ;[predicate description]
+    ...)
+  :effect (and
+    (not ([predicate_i] ?Xx ...))
+    ([predicate_k] ?Yy ...)   ;[predicate description]
+    (increase (total-cost) 1)
+    ...))
+;... (repeat for each intermediate step)
+
+;Step N (final): achieves S/T/R/I/D/E to the target system
+(:action [<actor>-verb-...]
+  :parameters (
+    ?Target - target-system        ;the compromised system
+    ?Xx  - [typexx]           ;[parameter description]
+    ...)
+  :precondition (and
+    ([predicate_m] ?Target ...)  ;[predicate description]
+    ([predicate_n] ?Xx ...)   ;[predicate description]
+    ...)
+  :effect (and
+    (not ([predicate_n] ?Xx ...))
+    (spoofing/tampering/repudiation/information-disclosure/
+     denial-of-service/elevation-of-privilege ?Target) ;STRIDE goal — appears ONLY here, never in intermediate actions:
+    (increase (total-cost) 1)
+    ...)))
