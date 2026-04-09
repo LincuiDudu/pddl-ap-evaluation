@@ -18,8 +18,14 @@ class CVEEntry:
 class FewShotExample:
     """A single few-shot example: CVE description → PDDL domain."""
     cve_id: str
+    ap_id: str
     description: str
     domain_pddl: str
+
+    @property
+    def key(self) -> str:
+        """Unique key for this example, e.g. 'CVE-2022-40149 / AP2'."""
+        return f"{self.cve_id} / {self.ap_id}"
 
 
 def load_cve_list(path: str | Path) -> list[CVEEntry]:
@@ -46,7 +52,7 @@ def load_few_shot_pool(dataset_dir: str | Path) -> list[FewShotExample]:
                 AP2/
                     domain.pddl
 
-    Uses AP1/domain.pddl for each CVE (one example per CVE).
+    Loads all APx variants for each CVE (one FewShotExample per AP).
     """
     dataset_dir = Path(dataset_dir)
     examples = []
@@ -56,17 +62,23 @@ def load_few_shot_pool(dataset_dir: str | Path) -> list[FewShotExample]:
             continue
 
         desc_file = cve_dir / "description.txt"
-        # Use AP1 as the canonical example for each CVE
-        domain_file = cve_dir / "AP1" / "domain.pddl"
-
-        if not desc_file.exists() or not domain_file.exists():
+        if not desc_file.exists():
             continue
 
-        examples.append(FewShotExample(
-            cve_id=cve_dir.name,
-            description=desc_file.read_text(encoding="utf-8").strip(),
-            domain_pddl=domain_file.read_text(encoding="utf-8").strip(),
-        ))
+        description = desc_file.read_text(encoding="utf-8").strip()
+
+        for ap_dir in sorted(cve_dir.iterdir()):
+            if not ap_dir.is_dir() or not ap_dir.name.startswith("AP"):
+                continue
+            domain_file = ap_dir / "domain.pddl"
+            if not domain_file.exists():
+                continue
+            examples.append(FewShotExample(
+                cve_id=cve_dir.name,
+                ap_id=ap_dir.name,
+                description=description,
+                domain_pddl=domain_file.read_text(encoding="utf-8").strip(),
+            ))
 
     return examples
 
@@ -76,7 +88,7 @@ def select_few_shot_examples(
     num_examples: int,
     exclude_cve: str | None = None,
     mode: str = "random",
-    fixed_cves: list[str] | None = None,
+    fixed_keys: list[str] | None = None,
     seed: int | None = None,
 ) -> list[FewShotExample]:
     """
@@ -85,21 +97,21 @@ def select_few_shot_examples(
     Args:
         pool: All available examples.
         num_examples: How many to select.
-        exclude_cve: CVE ID to exclude (avoid data leakage).
+        exclude_cve: CVE ID to exclude all APs of (avoid data leakage).
         mode: "random" or "fixed".
-        fixed_cves: CVE IDs to use in fixed mode.
+        fixed_keys: Example keys to use in fixed mode, e.g. ["CVE-2022-1471 / AP1"].
         seed: Random seed for reproducibility.
 
     Returns:
         Selected examples.
     """
-    # Filter out the current CVE to avoid leakage
     candidates = [ex for ex in pool if ex.cve_id != exclude_cve]
 
     if mode == "fixed":
-        if not fixed_cves:
-            raise ValueError("fixed_cves must be provided in fixed mode")
-        selected = [ex for ex in candidates if ex.cve_id in fixed_cves]
+        if not fixed_keys:
+            raise ValueError("fixed_keys must be provided in fixed mode")
+        key_set = set(fixed_keys)
+        selected = [ex for ex in candidates if ex.key in key_set]
         return selected[:num_examples]
 
     elif mode == "random":

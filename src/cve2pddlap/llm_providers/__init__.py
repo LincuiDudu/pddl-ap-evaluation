@@ -21,7 +21,7 @@ def create_provider(host: str | None = None, **kwargs) -> LLMProvider:
         host = settings.LLM.model_host
 
     max_tokens = kwargs.pop("max_tokens", settings.LLM.max_tokens)
-    model = kwargs.pop("model", settings.LLM.models[host])
+    model = kwargs.pop("model", getattr(settings.LLM.models, host))
 
     if host == "gemini":
         from cve2pddlap.llm_providers.remote.gemini import GeminiProvider

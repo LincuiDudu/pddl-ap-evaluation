@@ -1,0 +1,106 @@
+[
+     {
+    "cve_id": "CVE-2025-66032",
+    "description": "Claude Code is an agentic coding tool. Prior to 1.0.93, Due to errors in parsing shell commands related to $IFS and short CLI flags, it was possible to bypass the Claude Code read-only validation and trigger arbitrary code execution. Reliably exploiting this requires the ability to add untrusted content into a Claude Code context window. This vulnerability is fixed in 1.0.93."
+     },
+    {
+    "cve_id": "CVE-2025-64755",
+    "description": "Claude Code is an agentic coding tool. Prior to version 2.0.31, due to an error in sed command parsing, it was possible to bypass the Claude Code read-only validation and write to arbitrary files on the host system. This issue has been patched in version 2.0.31."
+    },
+    {
+    "cve_id": "CVE-2025-59536",
+    "description": "Claude Code is an agentic coding tool. Versions before 1.0.111 were vulnerable to Code Injection due to a bug in the startup trust dialog implementation. Claude Code could be tricked to execute code contained in a project before the user accepted the startup trust dialog. Exploiting this requires a user to start Claude Code in an untrusted directory. Users on standard Claude Code auto-update will have received this fix automatically. Users performing manual updates are advised to update to the latest version. This issue is fixed in version 1.0.111."
+   },
+  {
+    "cve_id": "CVE-2025-54795",
+    "description": "Claude Code is an agentic coding tool. In versions below 1.0.20, an error in command parsing makes it possible to bypass the Claude Code confirmation prompt to trigger execution of an untrusted command. Reliably exploiting this requires the ability to add untrusted content into a Claude Code context window. This is fixed in version 1.0.20."
+   },
+  {
+    "cve_id": "CVE-2025-9930",
+    "description": "A security vulnerability has been detected in 1000projects Beauty Parlour Management System 1.0. This impacts an unknown function of the file /admin/contact-us.php. The manipulation of the argument mobnumber leads to sql injection. The attack can be initiated remotely. The exploit has been disclosed publicly and may be used."
+   },
+  {
+    "cve_id": "CVE-2022-1471",
+    "description": "SnakeYaml's Constructor() class does not restrict types which can be instantiated during deserialization. Deserializing yaml content provided by an attacker can lead to remote code execution. We recommend using SnakeYaml's SafeConsturctor when parsing untrusted content to restrict deserialization. We recommend upgrading to version 2.0 and beyond."
+  },
+  {
+    "cve_id": "CVE-2022-40149",
+    "description": "Those using Jettison to parse untrusted XML or JSON data may be vulnerable to Denial of Service attacks (DOS). If the parser is running on user supplied input, an attacker may supply content that causes the parser to crash by stackoverflow. This effect may support a denial of service attack."
+  },
+  {
+    "cve_id": "CVE-2022-40150",
+    "description": "Those using Jettison to parse untrusted XML or JSON data may be vulnerable to Denial of Service attacks (DOS). If the parser is running on user supplied input, an attacker may supply content that causes the parser to crash by Out of memory. This effect may support a denial of service attack."
+  },
+  {
+    "cve_id": "CVE-2023-2976",
+    "description": "Use of Java's default temporary directory for file creation in `FileBackedOutputStream` in Google Guava versions 1.0 to 31.1 on Unix systems and Android Ice Cream Sandwich allows other users and apps on the machine with access to the default Java temporary directory to be able to access the files created by the class. Even though the security vulnerability is fixed in version 32.0.0, we recommend using version 32.0.1 as version 32.0.0 breaks some functionality under Windows."
+  },
+  {
+    "cve_id": "CVE-2023-33202",
+    "description": "Bouncy Castle for Java before 1.73 contains a potential Denial of Service (DoS) issue within the Bouncy Castle org.bouncycastle.openssl.PEMParser class. This class parses OpenSSL PEM encoded streams containing X.509 certificates, PKCS8 encoded keys, and PKCS7 objects. Parsing a file that has crafted ASN.1 data through the PEMParser causes an OutOfMemoryError, which can enable a denial of service attack. (For users of the FIPS Java API: BC-FJA 1.0.2.3 and earlier are affected; BC-FJA 1.0.2.4 is fixed.)"
+  },
+  {
+    "cve_id": "CVE-2023-34055",
+    "description": "The fix for CVE-2022-22968 made disallowedFields patterns in DataBinder case insensitive. However, String.toLowerCase() has some Locale dependent exceptions that could potentially result in fields not protected as expected."
+  },
+  {
+    "cve_id": "CVE-2023-44487",
+    "description": "The HTTP/2 protocol allows a denial of service (server resource consumption) because request cancellation can reset many streams quickly, as exploited in the wild in August through October 2023."
+  },
+  {
+    "cve_id": "CVE-2023-46589",
+    "description": "Improper Input Validation vulnerability in Apache Tomcat.Tomcat from 11.0.0-M1 through 11.0.0-M10, from 10.1.0-M1 through 10.1.15, from 9.0.0-M1 through 9.0.82 and from 8.5.0 through 8.5.95 did not correctly parse HTTP trailer headers. A trailer header that exceeded the header size limit could cause Tomcat to treat a single request as multiple requests leading to the possibility of request smuggling when behind a reverse proxy. Older, EOL versions may also be affected. Users are recommended to upgrade to version 11.0.0-M11 onwards, 10.1.16 onwards, 9.0.83 onwards or 8.5.96 onwards, which fix the issue."
+  },
+  {
+    "cve_id": "CVE-2023-6378",
+    "description": "A serialization vulnerability in logback receiver component part of logback version 1.4.11 allows an attacker to mount a Denial-Of-Service attack by sending poisoned data."
+  },
+  {
+    "cve_id": "CVE-2024-12798",
+    "description": "ACE vulnerability in JaninoEventEvaluator by QOS.CH logback-core upto including version 0.1 to 1.3.14 and 1.4.0 to 1.5.12 in Java applications allows attacker to execute arbitrary code by compromising an existing logback configuration file or by injecting an environment variable before program execution. Malicious logback configuration files can allow the attacker to execute arbitrary code using the JaninoEventEvaluator extension. A successful attack requires the user to have write access to a configuration file. Alternatively, the attacker could inject a malicious environment variable pointing to a malicious configuration file. In both cases, the attack requires existing privilege."
+  },
+  {
+    "cve_id": "CVE-2024-22243",
+    "description": "Applications that use UriComponentsBuilder to parse an externally provided URL (e.g. through a query parameter) AND perform validation checks on the host of the parsed URL may be vulnerable to a open redirect https://cwe.mitre.org/data/definitions/601.html  attack or to a SSRF attack if the URL is used after passing validation checks."
+  },
+  {
+    "cve_id": "CVE-2024-22259",
+    "description": "Applications that use UriComponentsBuilder in Spring Framework to parse an externally provided URL (e.g. through a query parameter) AND perform validation checks on the host of the parsed URL may be vulnerable to a open redirect https://cwe.mitre.org/data/definitions/601.html  attack or to a SSRF attack if the URL is used after passing validation checks."
+  },
+  {
+    "cve_id": "CVE-2024-22262",
+    "description": "Applications that use UriComponentsBuilder to parse an externally provided URL (e.g. through a query parameter) AND perform validation checks on the host of the parsed URL may be vulnerable to a open redirect https://cwe.mitre.org/data/definitions/601.html  attack or to a SSRF attack if the URL is used after passing validation checks. This is the same as CVE-2024-22259 https://spring.io/security/cve-2024-22259  and CVE-2024-22243 https://spring.io/security/cve-2024-22243 , but with different input."
+  },
+  {
+    "cve_id": "CVE-2024-34447",
+    "description": "An issue was discovered in the Bouncy Castle Crypto Package For Java before BC TLS Java 1.0.19 (ships with BC Java 1.78, BC Java (LTS) 2.73.6) and before BC FIPS TLS Java 1.0.19. When endpoint identification is enabled in the BCJSSE and an SSL socket is created without an explicit hostname (as happens with HttpsURLConnection), hostname verification could be performed against a DNS-resolved IP address in some situations, opening up a possibility of DNS poisoning."
+  },
+  {
+    "cve_id": "CVE-2024-38286",
+    "description": "Allocation of Resources Without Limits or Throttling vulnerability in Apache Tomcat. This issue affects Apache Tomcat: from 11.0.0-M1 through 11.0.0-M20, from 10.1.0-M1 through 10.1.24, from 9.0.13 through 9.0.89. The following versions were EOL at the time the CVE was created but are known to be affected: 8.5.35 through 8.5.100 and 7.0.92 through 7.0.109. Other EOL versions may also be affected. Users are recommended to upgrade to version 11.0.0-M21, 10.1.25, or 9.0.90, which fixes the issue. Apache Tomcat, under certain configurations on any platform, allows an attacker to cause an OutOfMemoryError by abusing the TLS handshake process."
+  },
+  {
+    "cve_id": "CVE-2024-38809",
+    "description": "Applications that parse ETags from \"If-Match\" or \"If-None-Match\" request headers are vulnerable to DoS attack. Users of affected versions should upgrade to the corresponding fixed version. Users of older, unsupported versions could enforce a size limit on \"If-Match\" and \"If-None-Match\" headers, e.g. through a Filter."
+  },
+  {
+    "cve_id": "CVE-2024-38816",
+    "description": "Applications serving static resources through the functional web frameworks WebMvc.fn or WebFlux.fn are vulnerable to path traversal attacks. An attacker can craft malicious HTTP requests and obtain any file on the file system that is also accessible to the process in which the Spring application is running. Specifically, an application is vulnerable when both of the following are true: * the web application uses RouterFunctions to serve static resources * resource handling is explicitly configured with a FileSystemResource location However, malicious requests are blocked and rejected when any of the following is true: * the Spring Security HTTP Firewall https://docs.spring.io/spring-security/reference/servlet/exploits/firewall.html  is in use * the application runs on Tomcat or Jetty"
+  },
+  {
+    "cve_id": "CVE-2024-38820",
+    "description": "The fix for CVE-2022-22968 made disallowedFields patterns in DataBinder case insensitive. However, String.toLowerCase() has some Locale dependent exceptions that could potentially result in fields not protected as expected."
+  },
+  {
+    "cve_id": "CVE-2024-47072",
+    "description": "XStream is a simple library to serialize objects to XML and back again. This vulnerability may allow a remote attacker to terminate the application with a stack overflow error resulting in a denial of service only by manipulating the processed input stream when XStream is configured to use the BinaryStreamDriver. XStream 1.4.21 has been patched to detect the manipulation in the binary input stream causing the the stack overflow and raises an InputManipulationException instead. Users are advised to upgrade. Users unable to upgrade may catch the StackOverflowError in the client code calling XStream if XStream is configured to use the BinaryStreamDriver."
+  },
+  {
+    "cve_id": "CVE-2025-22228",
+    "description": "BCryptPasswordEncoder.matches(CharSequence,String) will incorrectly return true for passwords larger than 72 characters as long as the first 72 characters are the same."
+  },
+  {
+    "cve_id": "CVE-2025-24813",
+    "description": "Path Equivalence: 'file.Name' (Internal Dot) leading to Remote Code Execution and/or Information disclosure and/or malicious content added to uploaded files via write enabled Default Servlet in Apache Tomcat. This issue affects Apache Tomcat: from 11.0.0-M1 through 11.0.2, from 10.1.0-M1 through 10.1.34, from 9.0.0.M1 through 9.0.98. The following versions were EOL at the time the CVE was created but are known to be affected: 8.5.0 though 8.5.100. Other, older, EOL versions may also be affected. If all of the following were true, a malicious user was able to view security sensitive files and/or inject content into those files: - writes enabled for the default servlet (disabled by default) - support for partial PUT (enabled by default) - a target URL for security sensitive uploads that was a sub-directory of a target URL for public uploads - attacker knowledge of the names of security sensitive files being uploaded - the security sensitive files also being uploaded via partial PUT If all of the following were true, a malicious user was able to perform remote code execution: - writes enabled for the default servlet (disabled by default) - support for partial PUT (enabled by default) - application was using Tomcat's file based session persistence with the default storage location - application included a library that may be leveraged in a deserialization attack Users are recommended to upgrade to version 11.0.3, 10.1.35 or 9.0.99, which fixes the issue."
+  }
+]

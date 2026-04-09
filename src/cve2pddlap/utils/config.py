@@ -54,6 +54,9 @@ class Settings:
                 return default
         return current
 
+    def __getitem__(self, key: str):
+        return self.__getattr__(key)
+
     def __repr__(self):
         return f"Settings({list(self._data.keys())})"
 
