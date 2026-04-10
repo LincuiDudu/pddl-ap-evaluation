@@ -21,6 +21,16 @@ ALL_HOSTS = [
     "qwen3b", "qwen7b", "qwen14b", "qwen7b_coder",
 ]
 
+# Which parameters each provider supports
+_PROVIDER_CAPS = {
+    "gemini":  {"temperature", "seed", "top_p"},
+    "deepseek": {"temperature", "seed", "top_p"},
+    "qwen":    {"temperature", "seed", "top_p"},
+    "zhipu":   {"temperature", "seed", "top_p"},
+    "gpt4":    {"temperature", "seed", "top_p"},
+    "claude":  {"temperature", "top_p"},           # no seed
+}
+
 
 def create_provider(host: str | None = None, **kwargs) -> LLMProvider:
     """
@@ -29,7 +39,7 @@ def create_provider(host: str | None = None, **kwargs) -> LLMProvider:
     Args:
         host: Provider name. One of ALL_HOSTS. Defaults to settings.LLM.model_host.
         **kwargs: Override model, max_tokens, temperature, seed, top_p, etc.
-                  Local providers default to temperature=0, seed=42, top_p=1.
+                  Local/LAN providers default to temperature=0, seed=42, top_p=1.
 
     Returns:
         LLMProvider instance ready to call .send()
@@ -42,7 +52,7 @@ def create_provider(host: str | None = None, **kwargs) -> LLMProvider:
     seed = kwargs.pop("seed", None)
     top_p = kwargs.pop("top_p", None)
 
-    # --- Remote providers (with full parameter control) ---
+    # --- Remote providers ---
     if host == "gemini":
         from cve2pddlap.llm_providers.remote.gemini import GeminiProvider
         model = kwargs.pop("model", getattr(settings.LLM.models, host))
@@ -56,20 +66,27 @@ def create_provider(host: str | None = None, **kwargs) -> LLMProvider:
         cls = {"deepseek": DeepSeekProvider, "qwen": QwenProvider,
                "zhipu": ZhipuProvider, "gpt4": GPT4Provider}[host]
         model = kwargs.pop("model", getattr(settings.LLM.models, host))
-        return cls(model=model, max_tokens=max_tokens, temperature=temperature, **kwargs)
+        return cls(model=model, max_tokens=max_tokens,
+                   temperature=temperature, seed=seed, top_p=top_p)
 
     elif host == "claude":
         from cve2pddlap.llm_providers.remote.claude import ClaudeProvider
         model = kwargs.pop("model", getattr(settings.LLM.models, host))
-        return ClaudeProvider(model=model, max_tokens=max_tokens, temperature=temperature)
+        return ClaudeProvider(model=model, max_tokens=max_tokens,
+                              temperature=temperature, top_p=top_p)
 
     # --- Ollama providers (LAN) ---
     elif host == "deepseek_r1_ollama":
         from cve2pddlap.llm_providers.remote.ollama import DeepSeekR1OllamaProvider
-        return DeepSeekR1OllamaProvider(
-            max_tokens=max_tokens,
-            temperature=temperature if temperature is not None else 0.0,
-        )
+        params = {**_LOCAL_DEFAULTS}
+        params["max_tokens"] = max_tokens
+        if temperature is not None:
+            params["temperature"] = temperature
+        if seed is not None:
+            params["seed"] = seed
+        if top_p is not None:
+            params["top_p"] = top_p
+        return DeepSeekR1OllamaProvider(**params)
 
     # --- Local vLLM providers ---
     elif host in ("qwen3b", "qwen7b", "qwen14b", "qwen7b_coder"):

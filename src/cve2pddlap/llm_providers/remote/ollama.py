@@ -1,9 +1,7 @@
 """
 Ollama provider for locally hosted models via OpenAI-compatible API.
 Ollama runs on port 11434 by default.
-
-Ollama does not support seed/top_k via the OpenAI-compatible endpoint.
-temperature=0 is used for reproducibility.
+Supports: temperature, top_p, seed.
 """
 
 from __future__ import annotations
@@ -18,7 +16,6 @@ class OllamaProvider(LLMProvider):
     """
     Provider for any model served via Ollama.
     temperature=0 by default for reproducibility.
-    Note: Ollama does not support seed or top_k via OpenAI-compatible API.
     """
 
     def __init__(
@@ -26,19 +23,26 @@ class OllamaProvider(LLMProvider):
         model: str,
         max_tokens: int = 4096,
         temperature: float = 0.0,
+        seed: int = 42,
+        top_p: float = 1.0,
         base_url: str | None = None,
     ):
-        super().__init__(model, max_tokens, temperature)
+        super().__init__(model, max_tokens, temperature, seed, top_p)
         url = base_url or settings.LLM.endpoints.ollama
         self.client = OpenAI(api_key="ollama", base_url=url)
 
     def _send_impl(self, messages: list[dict[str, str]]) -> str:
-        response = self.client.chat.completions.create(
+        kwargs = dict(
             model=self.model,
             messages=messages,
             max_tokens=self.max_tokens,
             temperature=self.temperature,
         )
+        if self.seed is not None:
+            kwargs["seed"] = self.seed
+        if self.top_p is not None:
+            kwargs["top_p"] = self.top_p
+        response = self.client.chat.completions.create(**kwargs)
         return response.choices[0].message.content
 
 
