@@ -1,7 +1,7 @@
 [default]
 
 [default.LLM]
-model_host = "deepseek"
+model_host = "deepseek_r1_ollama"
 max_tokens = 4096
 
 [default.LLM.models]
@@ -19,12 +19,15 @@ qwen3b       = "Qwen/Qwen2.5-3B-Instruct"
 qwen7b       = "Qwen/Qwen2.5-7B-Instruct"
 qwen14b      = "Qwen/Qwen2.5-14B-Instruct"
 qwen7b_coder = "Qwen/Qwen2.5-Coder-7B-Instruct"
+# Ollama (LAN machine)
+deepseek_r1_ollama = "deepseek-r1:7b"
 
 [default.LLM.endpoints]
 deepseek = "https://api.deepseek.com"
 qwen     = "https://dashscope.aliyuncs.com/compatible-mode/v1"
 zhipu    = "https://open.bigmodel.cn/api/paas/v4"
 vllm     = "http://localhost:8000/v1"
+ollama   = "http://192.168.178.27:11434/v1"
 
 # Reproducibility defaults for local (vLLM) inference
 [default.LLM.local]

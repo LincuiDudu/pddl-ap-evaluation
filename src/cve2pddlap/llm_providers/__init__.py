@@ -54,6 +54,12 @@ def create_provider(host: str | None = None, **kwargs) -> LLMProvider:
         model = kwargs.pop("model", getattr(settings.LLM.models, host))
         return ClaudeProvider(model=model, max_tokens=max_tokens)
 
+    # --- Ollama providers (LAN) ---
+    elif host == "deepseek_r1_ollama":
+        from cve2pddlap.llm_providers.remote.ollama import DeepSeekR1OllamaProvider
+        temperature = kwargs.pop("temperature", 0.0)
+        return DeepSeekR1OllamaProvider(max_tokens=max_tokens, temperature=temperature)
+
     # --- Local vLLM providers ---
     elif host in ("qwen3b", "qwen7b", "qwen14b", "qwen7b_coder"):
         from cve2pddlap.llm_providers.remote.vllm import (
