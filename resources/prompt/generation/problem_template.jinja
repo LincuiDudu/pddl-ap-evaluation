@@ -1,0 +1,27 @@
+(define (problem AEDI-<stride-goal>)
+  (:domain AED)
+  (:objects
+    SEFA - target-system
+    <component>_SEFA - <component-type>      ;system component bound to target
+    ...
+    <artifact>1 - <artifact-type>            ;attacker-created artifact
+    ...
+    attacker1 - attacker
+    user1 - user                             ;include if user actions exist
+  )
+  (:init
+    (= (total-cost) 0)
+    ;; System composition — from exposure action preconditions (i)
+    (has-<component> SEFA <component>_SEFA)
+    (= (version <component>_SEFA) <N_version>)   ;; concrete vulnerable version
+    ...
+    ;; Permissions and access paths — from exposure action preconditions (ii)
+    (<predicate> SEFA ...)
+    ...
+    ;; Additional facts required by downstream actions but not produced by prior effects
+    (<predicate> ...)
+    ...
+  )
+  (:goal (and (spoofing/tampering/repudiation/information-disclosure/
+               denial-of-service/elevation-of-privilege SEFA)))
+  (:metric minimize (total-cost)))

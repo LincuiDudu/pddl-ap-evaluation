@@ -93,3 +93,61 @@ def build_messages(
     messages.append({"role": "user", "content": render_query(cve_id, cve_description)})
 
     return messages
+
+
+# --- Problem PDDL generation ---
+
+def render_problem_context() -> str:
+    """Render the system prompt for problem.pddl generation."""
+    template = _env.get_template("problem_context.jinja")
+    return template.render()
+
+
+def render_problem_query(cve_id: str, cve_description: str, domain_pddl: str) -> str:
+    """Render the user query for problem.pddl generation."""
+    template = _env.get_template("problem_query.jinja")
+    return template.render(cve_id=cve_id, cve_description=cve_description, domain_pddl=domain_pddl)
+
+
+def build_problem_messages(
+    cve_id: str,
+    cve_description: str,
+    domain_pddl: str,
+    few_shot_examples: list[FewShotExample] | None = None,
+) -> list[dict[str, str]]:
+    """
+    Build the message list for problem.pddl generation.
+
+    Zero-shot:
+        [system, user]
+
+    Few-shot:
+        [system, ex1_user, ex1_assistant, ..., user]
+
+    Args:
+        cve_id: Target CVE ID.
+        cve_description: Target CVE description.
+        domain_pddl: The generated domain.pddl to create a problem for.
+        few_shot_examples: Optional examples (must have problem_pddl attribute).
+    """
+    messages = [{"role": "system", "content": render_problem_context()}]
+
+    if few_shot_examples:
+        for ex in few_shot_examples:
+            if not hasattr(ex, 'problem_pddl') or not ex.problem_pddl:
+                continue
+            messages.append({
+                "role": "user",
+                "content": render_problem_query(ex.cve_id, ex.description, ex.domain_pddl),
+            })
+            messages.append({
+                "role": "assistant",
+                "content": ex.problem_pddl,
+            })
+
+    messages.append({
+        "role": "user",
+        "content": render_problem_query(cve_id, cve_description, domain_pddl),
+    })
+
+    return messages

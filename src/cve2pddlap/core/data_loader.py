@@ -16,11 +16,12 @@ class CVEEntry:
 
 @dataclass(frozen=True)
 class FewShotExample:
-    """A single few-shot example: CVE description → PDDL domain."""
+    """A single few-shot example: CVE description → PDDL domain + problem."""
     cve_id: str
     ap_id: str
     description: str
     domain_pddl: str
+    problem_pddl: str = ""
 
     @property
     def key(self) -> str:
@@ -73,11 +74,14 @@ def load_few_shot_pool(dataset_dir: str | Path) -> list[FewShotExample]:
             domain_file = ap_dir / "domain.pddl"
             if not domain_file.exists():
                 continue
+            problem_file = ap_dir / "problem.pddl"
+            problem_text = problem_file.read_text(encoding="utf-8").strip() if problem_file.exists() else ""
             examples.append(FewShotExample(
                 cve_id=cve_dir.name,
                 ap_id=ap_dir.name,
                 description=description,
                 domain_pddl=domain_file.read_text(encoding="utf-8").strip(),
+                problem_pddl=problem_text,
             ))
 
     return examples
