@@ -5,10 +5,12 @@ Metric-FF: fast solvability check (finds plan or reports failure).
 ENHSP:     strict syntax validation (stricter parser catches errors Metric-FF ignores).
 
 Usage:
-    ff = MetricFFChecker("/path/to/ff")
+    from cve2pddlap.evaluation.solvability import create_ff_checker, create_enhsp_checker
+
+    ff = create_ff_checker()        # reads path from settings.toml
     result = ff.check("domain.pddl", "problem.pddl")
 
-    enhsp = ENHSPChecker("/path/to/enhsp.jar")
+    enhsp = create_enhsp_checker()  # reads path from settings.toml
     result = enhsp.check("domain.pddl", "problem.pddl")
 """
 
@@ -20,6 +22,8 @@ import subprocess
 import tempfile
 from dataclasses import dataclass, field
 from pathlib import Path
+
+from cve2pddlap.utils.config import settings, PROJECT_ROOT
 
 logger = logging.getLogger(__name__)
 
@@ -339,3 +343,15 @@ class ENHSPChecker:
             raw_output=raw,
             error=error,
         )
+
+
+# --- Factory functions (read paths from settings.toml) ---
+
+def create_ff_checker() -> MetricFFChecker:
+    """Create a MetricFFChecker using the path from settings.toml."""
+    return MetricFFChecker(PROJECT_ROOT / settings.Evaluation.metric_ff)
+
+
+def create_enhsp_checker() -> ENHSPChecker:
+    """Create an ENHSPChecker using the path from settings.toml."""
+    return ENHSPChecker(PROJECT_ROOT / settings.Evaluation.enhsp)

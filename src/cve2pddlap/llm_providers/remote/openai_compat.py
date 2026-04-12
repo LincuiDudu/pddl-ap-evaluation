@@ -69,3 +69,23 @@ class GPT4Provider(OpenAICompatProvider):
                  top_p: float | None = None):
         super().__init__("gpt4", model, max_tokens,
                          temperature=temperature, seed=seed, top_p=top_p)
+
+
+class MistralProvider(OpenAICompatProvider):
+    """Mistral AI — free tier available (mistral-small, open-mistral-7b)."""
+    def __init__(self, model: str = "mistral-small-latest", max_tokens: int = 4096,
+                 temperature: float | None = None, seed: int | None = None,
+                 top_p: float | None = None):
+        super().__init__("mistral", model, max_tokens,
+                         base_url=settings.LLM.endpoints.mistral,
+                         temperature=temperature, seed=seed, top_p=top_p)
+
+
+class GroqProvider(OpenAICompatProvider):
+    """Groq — completely free, high-speed inference (Llama 3.3, Mixtral)."""
+    def __init__(self, model: str = "llama-3.3-70b-versatile", max_tokens: int = 4096,
+                 temperature: float | None = None, seed: int | None = None,
+                 top_p: float | None = None):
+        super().__init__("groq", model, max_tokens,
+                         base_url=settings.LLM.endpoints.groq,
+                         temperature=temperature, seed=seed, top_p=top_p)

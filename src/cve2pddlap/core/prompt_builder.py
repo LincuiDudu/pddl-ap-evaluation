@@ -103,15 +103,14 @@ def render_problem_context() -> str:
     return template.render()
 
 
-def render_problem_query(cve_id: str, cve_description: str, domain_pddl: str) -> str:
+def render_problem_query(cve_id: str, domain_pddl: str) -> str:
     """Render the user query for problem.pddl generation."""
     template = _env.get_template("problem_query.jinja")
-    return template.render(cve_id=cve_id, cve_description=cve_description, domain_pddl=domain_pddl)
+    return template.render(cve_id=cve_id, domain_pddl=domain_pddl)
 
 
 def build_problem_messages(
     cve_id: str,
-    cve_description: str,
     domain_pddl: str,
     few_shot_examples: list[FewShotExample] | None = None,
 ) -> list[dict[str, str]]:
@@ -126,7 +125,6 @@ def build_problem_messages(
 
     Args:
         cve_id: Target CVE ID.
-        cve_description: Target CVE description.
         domain_pddl: The generated domain.pddl to create a problem for.
         few_shot_examples: Optional examples (must have problem_pddl attribute).
     """
@@ -138,7 +136,7 @@ def build_problem_messages(
                 continue
             messages.append({
                 "role": "user",
-                "content": render_problem_query(ex.cve_id, ex.description, ex.domain_pddl),
+                "content": render_problem_query(ex.cve_id, ex.domain_pddl),
             })
             messages.append({
                 "role": "assistant",
@@ -147,7 +145,7 @@ def build_problem_messages(
 
     messages.append({
         "role": "user",
-        "content": render_problem_query(cve_id, cve_description, domain_pddl),
+        "content": render_problem_query(cve_id, domain_pddl),
     })
 
     return messages

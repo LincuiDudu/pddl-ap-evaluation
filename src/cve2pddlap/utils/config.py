@@ -73,6 +73,8 @@ def get_api_key(provider: str) -> str:
         "zhipu": "ZHIPU_API_KEY",
         "claude": "ANTHROPIC_API_KEY",
         "gpt4": "OPENAI_API_KEY",
+        "mistral": "MISTRAL_API_KEY",
+        "groq": "GROQ_API_KEY",
     }
     env_var = key_map.get(provider)
     if not env_var:
