@@ -47,7 +47,7 @@ Solve in order and move to next phase as soon as previous is done.
          - Initial generation results:
             - DeepSeek-R1-7B (local, seed:42; top_k = 1; tempreture = 0): poor quality
               - Outputs fail to follow PDDL syntax, naming conventions, and template structure — far below mid-tier API models (e.g., Qwen-plus) and large models (e.g., Claude Opus, chat-4o-mini, deepseek-r1) (see generation.ipynb outputs)                                                                                         
-- [x] Evaluation notebook (prompt and attack path)
+- [ ] Evaluation notebook (prompt and attack path)
     - Prepare code to simulate and test different evaluation strategies
     - Look into all the mentioned metrics and implement them
     - Try to implement batched evaluation wherever possible 
