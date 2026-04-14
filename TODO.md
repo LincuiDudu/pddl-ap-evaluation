@@ -34,19 +34,7 @@ Solve in order and move to next phase as soon as previous is done.
 - [x] Interfaces to LLMs
     - Look into Marco's code
     - [x] Done:
-       - Built Jinja2 template system supporting both zero-shot and few-shot prompts with unified instruction visibility control
-       - Domain generation prompt:
-         - Improved the quality of the domain generation prompt: conducted instruction ablation using Claude Opus (large model, simulated) and Qwen (mid-tier model, actual outputs): zero-shot ablation (baseline + single instruction, 16 rounds), cross-model validation (64 Qwen output combinations), and few-shot ablation (2-shot + individual BMI removal). 3 types of instructions:
-           - BMI 6 (high value for all models, always-on)
-           - SMI 5 (high value for weaker models, always-on in zero-shot, optional in few-shot)
-           - OI 3 (low value, always optional)
-         -  <span style="color:red;"> Continuing improve the prompt quality</span>
-       - Audited 55 reference `domain.pddl` files against BMI/SMI compliance: softened instructions wording or slightly revised `domain.pddl`
-       - Deployed DeepSeek-R1-7B (Q4_K_M) on a LAN machine via Ollama; server hub container could not host it due to ~10GB zombie GPU memory and container network isolation from LAN
-       - Running notebooks/prompt/generation.ipynb locally in VS Code, connecting to LAN Ollama endpoint; server hub lacks LAN access (workflow: VS Code → GitHub → server Jupyter pull)                                                                                       
-         - Initial generation results:
-            - DeepSeek-R1-7B (local, seed:42; top_k = 1; tempreture = 0): poor quality
-              - Outputs fail to follow PDDL syntax, naming conventions, and template structure — far below mid-tier API models (e.g., Qwen-plus) and large models (e.g., Claude Opus, chat-4o-mini, deepseek-r1) (see generation.ipynb outputs)                                                                                         
+       - Built Jinja2 template system supporting both zero-shot and few-shot prompts with unified instruction visibility control        
 - [ ] Evaluation notebook (prompt and attack path)
     - Prepare code to simulate and test different evaluation strategies
     - Look into all the mentioned metrics and implement them
@@ -71,7 +59,20 @@ Solve in order and move to next phase as soon as previous is done.
     - Use small models (even < 1B size) to proprype
     - Look into Marco's code
     - [x] Done:
-      - Paralelly done with point 3
+      - Domain generation prompt:
+         - Improved the quality of the domain generation prompt:
+           - conducted instruction ablation using Claude Opus (large model, simulated) and Qwen (mid-tier model, actual outputs): zero-shot ablation (baseline + single instruction, 16 rounds), cross-model validation (64 Qwen output combinations), and few-shot ablation (2-shot + individual BMI removal). 3 types of instructions:
+              - BMI 6 (high value for all models, always-on)
+              - SMI 5 (high value for weaker models, always-on in zero-shot, optional in few-shot)
+              - OI 3 (low value, always optional)
+           - Analysed the generation of different models (Qwen-max, deepseek-r1, gpt-4o-mini,...), add instructions to the prompt based on their error types.
+           -  <span style="color:red;"> Continuing improve the prompt quality</span>
+       - Audited 55 reference `domain.pddl` files against BMI/SMI compliance: softened instructions wording or slightly revised `domain.pddl`
+       - Deployed DeepSeek-R1-7B (Q4_K_M) on a LAN machine via Ollama; server hub container could not host it due to ~10GB zombie GPU memory and container network isolation from LAN
+       - Running notebooks/prompt/generation.ipynb locally in VS Code, connecting to LAN Ollama endpoint; server hub lacks LAN access (workflow: VS Code → GitHub → server Jupyter pull)                                                                                      
+         - Initial generation results:
+            - DeepSeek-R1-7B (local, seed:42; top_k = 1; tempreture = 0): poor quality
+              - Outputs fail to follow PDDL syntax, naming conventions, and template structure — far below mid-tier API models (e.g., Qwen-plus) and large models (e.g., Claude Opus, chat-4o-mini, deepseek-r1) (see generation.ipynb outputs)     
 - [ ] Prepare command line tools to implement everything we tested through the notebooks
     - Take efficiency into account (multiple calls to LLM and loading the models will slow down process a lot)
     - Look into Marco's code
