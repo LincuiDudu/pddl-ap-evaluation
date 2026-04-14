@@ -65,7 +65,9 @@ Solve in order and move to next phase as soon as previous is done.
               - BMI 6 (high value for all models, always-on)
               - SMI 5 (high value for weaker models, always-on in zero-shot, optional in few-shot)
               - OI 3 (low value, always optional)
-           - Analysed the generation of different models (Qwen-max, deepseek-r1, gpt-4o-mini,...), add instructions to the prompt based on their error types.
+           - Analysed the generation of different models (Qwen-max, deepseek-r1, gpt-4o-mini,...), improved (added) instructions to the prompt based on their error types.
+             - Qwen-max: solvabilty+syntax ✅ (`CVE-2025-66032_qwen-max_1shot.pddl`)
+             - gpt-4o-mini: solvabilty+syntax ✅ (`CVE-2025-66032_gpt4_1shot.pddl`)
            -  <span style="color:red;"> Continuing improve the prompt quality</span>
        - Audited 55 reference `domain.pddl` files against BMI/SMI compliance: softened instructions wording or slightly revised `domain.pddl`
        - Deployed DeepSeek-R1-7B (Q4_K_M) on a LAN machine via Ollama; server hub container could not host it due to ~10GB zombie GPU memory and container network isolation from LAN
