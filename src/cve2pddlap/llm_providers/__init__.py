@@ -21,6 +21,7 @@ ALL_HOSTS_TIERED = [
     ("Claude Sonnet 4.5            [paid]", "claude"),
     ("GPT-4o-mini                   [paid]", "gpt4"),
     ("DeepSeek-R1 (reasoning)      [paid]", "deepseek_r1"),
+    ("Qwen-Max                     [free]", "qwen_max"),
     ("Mistral Large                [paid]", "mistral_large"),
     ("Groq · Llama 3.3 70B         [free]", "groq_llama"),
     # ── Mid ──────────────────────────────────────────────────────────
@@ -52,6 +53,7 @@ MODEL_TIER: dict[str, str] = {
     "claude":        "large",
     "gpt4":          "large",
     "deepseek_r1":   "large",
+    "qwen_max":      "large",
     "mistral_large": "large",
     "groq_llama":    "large",
     # Mid-tier commercial API
@@ -74,6 +76,7 @@ _PROVIDER_CAPS = {
     "claude":        {"temperature", "top_p"},
     "gpt4":          {"temperature", "seed", "top_p"},
     "deepseek_r1":   {"temperature", "seed", "top_p"},
+    "qwen_max":      {"temperature", "seed", "top_p"},
     "mistral_large": {"temperature", "seed", "top_p"},
     "groq_llama":    {"temperature", "seed", "top_p"},
     "qwen":          {"temperature", "seed", "top_p"},
@@ -118,8 +121,9 @@ def create_provider(host: str | None = None, **kwargs) -> LLMProvider:
         return ClaudeProvider(model=model, max_tokens=max_tokens,
                               temperature=temperature, top_p=top_p)
 
-    elif host in ("deepseek", "deepseek_r1", "qwen", "zhipu", "gpt4",
-                  "mistral_small", "mistral_large", "groq_llama", "groq_mixtral"):
+    elif host in ("deepseek", "deepseek_r1", "qwen", "qwen_max", "zhipu", "gpt4",
+                  "mistral_small", "mistral_large", "groq_llama", "groq_mixtral",
+                  ):
         from cve2pddlap.llm_providers.remote.openai_compat import (
             DeepSeekProvider, QwenProvider, ZhipuProvider, GPT4Provider,
             MistralProvider, GroqProvider,
@@ -128,6 +132,7 @@ def create_provider(host: str | None = None, **kwargs) -> LLMProvider:
             "deepseek":      DeepSeekProvider,
             "deepseek_r1":   DeepSeekProvider,
             "qwen":          QwenProvider,
+            "qwen_max":      QwenProvider,
             "zhipu":         ZhipuProvider,
             "gpt4":          GPT4Provider,
             "mistral_small": MistralProvider,

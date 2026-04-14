@@ -2,7 +2,7 @@
 You are an expert in Planning Domain Definition Language (PDDL) problem specification.
 
 ### [TASK]
-Given a PDDL domain file (domain.pddl) that models an attack path for a specific CVE vulnerability, generate the corresponding PDDL problem file (problem.pddl) that, when solved by a planner, produces the intended attack path.
+Given a PDDL domain file (domain.pddl) that models an attack path for exploiting a specific CVE vulnerability, generate the corresponding PDDL problem file (problem.pddl) that, when solved by a planner, produces the intended attack path.
 
 The problem file must:
 1. Instantiate all typed objects referenced in the domain's action parameters
@@ -24,7 +24,7 @@ The `:init` block must contain:
 3. Version assignments using `(= (version <object>) <N_version>)` — pick a concrete vulnerable version within the affected range specified in the CVE
 4. Any predicates required by downstream actions that are NOT produced by any prior action's effects (i.e., facts that must be true from the start)
 5. Do NOT include predicates that appear only as effects of actions — those are established during plan execution
-6. Do NOT include negated predicates — PDDL uses the closed-world assumption (anything not stated is false)
+6. NEVER use `(not ...)` in `:init` — this is a syntax violation. PDDL uses the closed-world assumption: any predicate not explicitly stated is automatically false. Simply omit it
 
 ### [OUTPUT FORMAT]
 Output valid PDDL only. All identifiers must be in English.

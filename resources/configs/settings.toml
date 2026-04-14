@@ -9,6 +9,7 @@ max_tokens = 6144
 claude      = "claude-sonnet-4-5"
 gpt4        = "gpt-4o-mini"
 deepseek_r1 = "deepseek-reasoner"          # DeepSeek R1 reasoning model (paid)
+qwen_max    = "qwen-max"                   # Qwen largest model (FREE quota)
 mistral_large = "mistral-large-latest"     # Mistral large (paid)
 groq_llama  = "llama-3.3-70b-versatile"   # Groq Llama 3.3 70B (FREE)
 # Remote models — mid-tier
