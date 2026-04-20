@@ -84,11 +84,9 @@ Solve in order and move to next phase as soon as previous is done.
                              `Raw threat intelligence → (reason) → structured NL AP → (model) → structured PDDL AP domain`  
                              *(Even smaller models like GPT-4o-mini can pass under this setup)*
                            - **Rationale:**
-                             - See *“Root Cause Analysis: Why Not a Single Prompt❓”* in `pipeline_improvements.md`  
+                              - See *“Root Cause Analysis: Why Not a Single Prompt❓”* in `pipeline_improvements.md`  
                                *(Maybe this is model capability boundary, not architectural necessity)*
-                             - **Cost considerations:**
-                               - GPT-4o-mini: Input $0.15 / 1M tokens; Output $0.60 / 1M tokens  
-                               - GPT-4.1: Input $2.00 / 1M tokens; Output $8.00 / 1M tokens                         
+                              - **Cost considerations:** GPT-4o-mini: Input $0.15 / 1M tokens; Output $0.60 / 1M tokens; GPT-4.1: Input $2.00 / 1M tokens; Output $8.00 / 1M tokens                         
            - <span style="color:red;">Continuously improve prompt quality</span>
        - Audited 55 reference `domain.pddl` files against BMI/SMI compliance: softened instructions wording or slightly revised `domain.pddl`
        - Deployed DeepSeek-R1-7B (Q4_K_M) on a LAN machine via Ollama; server hub container could not host it due to ~10GB zombie GPU memory and container network isolation from LAN
