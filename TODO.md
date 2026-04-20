@@ -62,13 +62,34 @@ Solve in order and move to next phase as soon as previous is done.
       - Domain generation prompt:
          - Improved the quality of the domain generation prompt:
            - conducted instruction ablation using Claude Opus (large model, simulated) and Qwen (mid-tier model, actual outputs): zero-shot ablation (baseline + single instruction, 16 rounds), cross-model validation (64 Qwen output combinations), and few-shot ablation (2-shot + individual BMI removal). 3 types of instructions:
-              - BMI 6 (high value for all models, always-on)
+              - BMI 9 (high value for all models, always-on)
               - SMI 5 (high value for weaker models, always-on in zero-shot, optional in few-shot)
               - OI 3 (low value, always optional)
            - Analysed the generation of different models (Qwen-max, deepseek-r1, gpt-4o-mini,...), improved (added) instructions to the prompt based on their error types.
              - Qwen-max (1-shot): solvabilty+syntax ✅ (`CVE-2025-66032_qwen-max_1shot.pddl`)
              - gpt-4o-mini (1-shot): solvabilty+syntax ✅ (`CVE-2025-66032_gpt4_1shot.pddl`)
-           -  <span style="color:red;"> Continuing improve the prompt quality</span>
+             - [ ] ❓ **Significant issue:** The generated domain lacks sufficient detail; the planned APs miss too many critical elements
+               - [x] **Potential solutions:**
+                  - Try a more powerful model, such as **GPT-4.1**  
+                    *(Even without additional threat intelligence, GPT-4.1 produces higher-quality results)*
+                  - Introduce a **threat intelligence acquisition pipeline** instead of relying solely on CVE inputs  
+                    - **Rationale:** The paper *CVEAgent* shows that most current LLMs lack sufficient vulnerability knowledge. This is why their approach includes a dedicated agent for threat intelligence retrieval
+                  - [ ] ❓ **Another major issue:** Failure to pass solvability and syntax checks when feeding with richer raw threat intelligence.
+                      - [x] **Potential solutions:**
+                        - Incorporate **error feedback with context** → achieves ~100% pass rate (observed with GPT-4.1)
+                        - **Decouple the current pipeline** into two steps:
+                           - Current:  
+                             `Raw threat intelligence → (reason + model) → structured PDDL AP domain`
+                           - Proposed:  
+                             `Raw threat intelligence → (reason) → structured NL AP → (model) → structured PDDL AP domain`  
+                             *(Even smaller models like GPT-4o-mini can pass under this setup)*
+                           - **Rationale:**
+                             - See *“Root Cause Analysis: Why Not a Single Prompt❓”* in `pipeline_improvements.md`  
+                               *(Maybe this is model capability boundary, not architectural necessity)*
+                             - **Cost considerations:**
+                               - GPT-4o-mini: Input $0.15 / 1M tokens; Output $0.60 / 1M tokens  
+                               - GPT-4.1: Input $2.00 / 1M tokens; Output $8.00 / 1M tokens                         
+           - <span style="color:red;">Continuously improve prompt quality</span>
        - Audited 55 reference `domain.pddl` files against BMI/SMI compliance: softened instructions wording or slightly revised `domain.pddl`
        - Deployed DeepSeek-R1-7B (Q4_K_M) on a LAN machine via Ollama; server hub container could not host it due to ~10GB zombie GPU memory and container network isolation from LAN
        - Running notebooks/prompt/generation.ipynb locally in VS Code, connecting to LAN Ollama endpoint; server hub lacks LAN access (workflow: VS Code → GitHub → server Jupyter pull)                                                                                      
