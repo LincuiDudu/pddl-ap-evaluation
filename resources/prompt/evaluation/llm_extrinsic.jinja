@@ -1,0 +1,21 @@
+You are given a CVE vulnerability description, a reference PDDL attack path (domain + problem) that is known to be correct, and a candidate PDDL attack path (domain + problem).
+
+Evaluate whether the candidate PDDL code correctly models the same vulnerability as the reference.
+Answer with "YES" if it correctly matches, "NO" if it does not, followed by a brief explanation.
+
+## CVE Description
+{{ description }}
+
+## Reference PDDL Domain
+{{ domain_reference }}
+
+## Reference PDDL Problem
+{{ problem_reference }}
+
+## Generated PDDL Domain
+{{ domain_generated }}
+
+## Generated PDDL Problem
+{{ problem_generated }}
+
+## Evaluation

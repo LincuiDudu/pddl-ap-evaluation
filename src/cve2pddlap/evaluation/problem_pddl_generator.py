@@ -704,12 +704,13 @@ def _extract_stride_goal(actions: list[Action]) -> str | None:
 # Main entry point
 # ---------------------------------------------------------------------------
 
-def generate_problem(domain_pddl: str) -> str:
+def generate_problem(domain_pddl: str, save_path: str | None = None) -> str:
     """
     Generate a problem.pddl string from a domain.pddl string.
 
     Args:
         domain_pddl: Complete domain.pddl content.
+        save_path: If provided, save the generated problem to this file path.
 
     Returns:
         Complete problem.pddl content.
@@ -761,8 +762,26 @@ def generate_problem(domain_pddl: str) -> str:
     m = re.search(r'\(define\s+\(domain\s+([\w-]+)\)', domain_pddl)
     domain_name = m.group(1) if m else 'AED'
 
+    # Find the actual target-system object name (could be a subtype like tomcat-server_SEFA)
+    target_obj = 'SEFA'
+    # Check if 'target-system' has an object directly
+    if 'target-system' in type_to_obj:
+        target_obj = type_to_obj['target-system']
+    else:
+        # Find any subtype of target-system that has an object
+        for typ, parent in types_map.items():
+            if parent == 'target-system' and typ in type_to_obj:
+                target_obj = type_to_obj[typ]
+                break
+
     # Render
-    return _render_problem(stride_goal, objects, init_preds, domain_name)
+    problem_str = _render_problem(stride_goal, objects, init_preds, domain_name, target_obj)
+
+    if save_path is not None:
+        from pathlib import Path
+        Path(save_path).write_text(problem_str, encoding='utf-8')
+
+    return problem_str
 
 
 def _render_problem(
@@ -770,6 +789,7 @@ def _render_problem(
     objects: list[tuple[str, str]],
     init_preds: list[str],
     domain_name: str = 'AED',
+    target_obj: str = 'SEFA',
 ) -> str:
     """Render the problem.pddl string."""
     lines = []
@@ -790,7 +810,7 @@ def _render_problem(
     lines.append('  )')
 
     # Goal
-    lines.append(f'  (:goal (and ({stride_goal} SEFA)))')
+    lines.append(f'  (:goal (and ({stride_goal} {target_obj})))')
     lines.append('  (:metric minimize (total-cost)))')
     lines.append('')
 

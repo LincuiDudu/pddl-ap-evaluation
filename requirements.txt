@@ -10,3 +10,7 @@ python-dotenv>=1.0
 tenacity>=8.0
 tqdm>=4.60
 tomli>=2.0
+torch>=2.4
+sentence-transformers
+transformers
+accelerate
