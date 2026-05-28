@@ -1,0 +1,105 @@
+{% import "base.jinja" as macros -%}
+
+{#- ============================================================
+    PART 1: Build system message content
+    Same structure as completion.md.jinja sections 1-5 + output format
+    ============================================================ -#}
+
+{%- set system_parts = [] -%}
+
+{#- Section 1: Role & Context -#}
+{%- set _ = system_parts.append(macros.evaluation_context(extrinsic=extrinsic, binary=binary)) -%}
+
+{#- Section 2: Evaluation Policy -#}
+{%- set _ = system_parts.append(macros.evaluation_policy(extrinsic=extrinsic)) -%}
+
+{#- Section 3: Background Knowledge -#}
+{%- set _ = system_parts.append(macros.adversarial_model()) -%}
+{%- set _ = system_parts.append(macros.attack_stage_reference()) -%}
+
+{#- Section 4: Evaluation Criteria -#}
+{%- if binary -%}
+  {%- set _ = system_parts.append(macros.binary_criteria(extrinsic=extrinsic)) -%}
+{%- else -%}
+  {%- set _ = system_parts.append("Evaluate the attack path on the following " ~ ("16" if extrinsic else "12") ~ " criteria using a 0-5 Likert scale (0 = incoherent/absent, 1 = severe violation, 5 = fully satisfied).") -%}
+  {%- set _ = system_parts.append(macros.semantic_criteria()) -%}
+  {%- if extrinsic -%}
+    {%- set _ = system_parts.append(macros.reference_criteria()) -%}
+  {%- endif -%}
+{%- endif -%}
+
+{#- Section 5: Calibration Examples -#}
+{%- set _ = system_parts.append(macros.calibration_examples(calibration_data=calibration_data, binary=binary)) -%}
+
+{#- Output format (binary only; scored format goes in user message) -#}
+{%- if binary -%}
+  {%- set _ = system_parts.append(macros.binary_output_format()) -%}
+{%- endif -%}
+
+{%- set system_content = system_parts | join("\n\n") -%}
+
+
+{#- ============================================================
+    PART 2: Build user message (actual evaluation instance)
+    ============================================================ -#}
+
+{%- set user_parts = [] -%}
+{%- set _ = user_parts.append("## CVE Description\n\n" ~ cve_id ~ "\n" ~ description) -%}
+{%- if extrinsic -%}
+  {%- set _ = user_parts.append("## Reference PDDL Domain (expert-authored)\n\n```pddl\n" ~ domain_reference ~ "\n```") -%}
+{%- endif -%}
+{%- set _ = user_parts.append("## Candidate PDDL Domain\n\n```pddl\n" ~ domain ~ "\n```") -%}
+{%- if binary -%}
+  {%- set _ = user_parts.append("## Evaluation\n\nQ: Is the candidate attack path correct and complete according to the CVE description" ~ (" and the reference domain" if extrinsic else "") ~ "?") -%}
+{%- else -%}
+  {%- set _ = user_parts.append("## Evaluation\n\n" ~ macros.scored_output_format(extrinsic=extrinsic)) -%}
+{%- endif -%}
+{%- set user_content = user_parts | join("\n\n") -%}
+
+
+{#- ============================================================
+    PART 3: Render JSONL output
+    ============================================================ -#}
+
+{%- if supports_system_message -%}
+{#- --- Format A: model supports system message --- -#}
+{"role": "system", "content": {{ system_content | tojson }}}
+
+{#- Few-shot examples as user/assistant pairs (binary only) -#}
+{%- if binary and few_shots is defined -%}
+{%- for example in few_shots %}
+{%- set ex_parts = [] -%}
+{%- set _ = ex_parts.append("## CVE Description\n\n" ~ example.cve_id ~ "\n" ~ example.description) -%}
+{%- if extrinsic -%}
+  {%- set _ = ex_parts.append("## Reference PDDL Domain (expert-authored)\n\n```pddl\n" ~ example.domain_reference ~ "\n```") -%}
+{%- endif -%}
+{%- set _ = ex_parts.append("## Candidate PDDL Domain\n\n```pddl\n" ~ example.domain ~ "\n```") -%}
+{%- set _ = ex_parts.append("## Evaluation\n\nQ: Is the candidate attack path correct and complete according to the CVE description" ~ (" and the reference domain" if extrinsic else "") ~ "?") -%}
+{"role": "user", "content": {{ ex_parts | join("\n\n") | tojson }}}
+{"role": "assistant", "content": {{ example.label | tojson }}}
+{%- endfor -%}
+{%- endif %}
+
+{#- Actual evaluation instance -#}
+{"role": "user", "content": {{ user_content | tojson }}}
+
+{%- else -%}
+{#- --- Format B: no system message support (merge into user) --- -#}
+{%- set merged_parts = [system_content] -%}
+
+{%- if binary and few_shots is defined -%}
+{%- for example in few_shots -%}
+{%- set ex_parts = [] -%}
+{%- set _ = ex_parts.append("---\n\n## CVE Description\n\n" ~ example.cve_id ~ "\n" ~ example.description) -%}
+{%- if extrinsic -%}
+  {%- set _ = ex_parts.append("## Reference PDDL Domain (expert-authored)\n\n```pddl\n" ~ example.domain_reference ~ "\n```") -%}
+{%- endif -%}
+{%- set _ = ex_parts.append("## Candidate PDDL Domain\n\n```pddl\n" ~ example.domain ~ "\n```") -%}
+{%- set _ = ex_parts.append("## Evaluation\n\nQ: Is the candidate attack path correct and complete according to the CVE description" ~ (" and the reference domain" if extrinsic else "") ~ "?\n\nA: " ~ example.label) -%}
+{%- set _ = merged_parts.append(ex_parts | join("\n\n")) -%}
+{%- endfor -%}
+{%- endif -%}
+
+{%- set _ = merged_parts.append("---\n\n" ~ user_content) -%}
+{"role": "user", "content": {{ merged_parts | join("\n\n") | tojson }}}
+{%- endif -%}

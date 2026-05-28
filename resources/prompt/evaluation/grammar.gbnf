@@ -1,0 +1,5 @@
+root ::= "{" ws "\"label\":" ws decision ws "}"
+
+decision ::= "true" | "false"
+
+ws ::= [ \t\n]*

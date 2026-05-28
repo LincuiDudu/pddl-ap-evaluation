@@ -1,0 +1,146 @@
+{#- Shared evaluation macros for PDDL attack path assessment -#}
+
+{% macro evaluation_context(extrinsic=False, binary=False) -%}
+You are an expert in both cybersecurity and PDDL (Planning Domain Definition Language), {% if binary %}acting as a binary classifier {% endif %}evaluating {% if not binary %}the semantic quality of {% endif %}a PDDL-encoded attack path generated from a CVE description{% if extrinsic %} by comparing it against a known-correct reference attack path{% endif %}.
+
+You are given:
+- A natural-language CVE vulnerability description
+- A candidate PDDL domain (LLM-generated, to be evaluated) that models the attack path as a numbered action sequence, where each action has preconditions and effects.
+{%- if extrinsic %}
+- A reference PDDL domain (expert-authored)
+{%- endif %}
+{% endmacro %}
+
+{% macro evaluation_policy(extrinsic=False) -%}
+### Evaluation Policy
+- Judge semantic quality of the attack modeling, not superficial textual similarity.
+- The candidate does not need to reproduce the CVE description literally.
+- Accept different naming, ordering, or predicate granularity if the attack semantics are preserved. Each action must still represent an atomic step.
+{%- if extrinsic %}
+- The reference domain is to be considered as an example of a possible attack path, not as the only viable solution.
+{%- endif %}
+{% endmacro %}
+
+{% macro adversarial_model() -%}
+### Adversarial Model
+The attacker is an external, unauthenticated adversary with no initial privileged access, interacting only with publicly exposed interfaces. The attacker has no prior knowledge of or access to system internals, cannot break strong cryptography, and the attack exploits exactly one CVE to achieve exactly one STRIDE goal. The attack path may include user-interaction steps (e.g., clicking a link, opening a file) when the CVE requires user interaction for exploitation (CVSS UI:Required).
+{% endmacro %}
+
+{% macro attack_stage_reference() -%}
+### Attack Stage Reference
+Attack paths in this domain generally follow stages from the Cyber Kill Chain (Reconnaissance → Weaponization → Delivery → Exploitation → Actions on Objectives), adapted to single-CVE exploitation. The typical structure is:
+1. **Exposure** (mandatory): confirm the target is vulnerable (System technical composition, system permissions and access paths, security controls and configurations, and other decidable and observable conditions characterizing vulnerability exposure)
+2. **Weaponization**: craft or prepare the malicious artifact
+3. **Delivery**: transmit the malicious artifact or trigger to the target
+4. **Exploitation**: target-side processing that triggers the vulnerability, often decomposed into multiple actions
+5. **Impact** (mandatory): STRIDE security outcome
+Not all vulnerabilities follow this linear progression. For example, volume-based attacks (e.g., flooding) may skip weaponization; user-interaction-dependent paths introduce additional actors and stages; protocol-level attacks (e.g., request smuggling) may interleave delivery and exploitation across multiple rounds. These variations are valid and should not be penalized.
+{% endmacro %}
+
+{% macro semantic_criteria() -%}
+### Evaluation Criteria
+
+Score scale (integer only, 0-2 = violation; 3-5 = no violation):
+- 0: Criterion fundamentally violated or unassessable.
+- 1: Severe violation.
+- 2: Clear violation with partial mitigation.
+- 3: No violation; notable quality issues.
+- 4: No violation; minor issues.
+- 5: Fully satisfied.
+If a criterion is violated, the maximum score is 2. If not violated, the minimum score is 3.
+
+**Action-Level Feasibility (F)** (the weakest action determines the domain-level score):
+- F1. Threat-Model Compliance: No action may assume capabilities excluded by the adversarial model or not established by prior actions.
+- F2. Real-World Operational Plausibility: Each action must correspond to a real-world operation, not merely a symbolic state transition. It must be expressible as a single sentence in an attack narrative.
+
+**Action-Level Atomicity (A)** (the weakest action determines the domain-level score):
+- A1. Atomic Step Integrity: An action cannot be decomposed into smaller independent attack steps. It should be a minimal attack primitive that exists in the real world. *Clarification:* An action whose single effect enables multiple downstream actions is still atomic. An action that internally performs multiple independent operations is not.
+- A2. Effect Justification: Effects should represent capability gains that are natural consequences of executing the action given its preconditions. Effects should not introduce capabilities that have no causal relationship to the action being performed. Effects should encode state changes that downstream actions depend on.
+
+**Plan-Level Completeness (C)**:
+- C1. Causal Coherence: The attack path must be a causally coherent narrative. Every action's semantic preconditions must follow naturally from the cumulative state established by prior actions, with no implicit jumps. Prohibited implicit jumps include: network boundary traversal without established access, privilege escalation without a prior foothold, credential use without prior acquisition, artifact use without prior creation, triggering a user-interaction vulnerability without a prior user-luring step.
+- C2. Critical Step Coverage: The attack path must include all stages from the Attack Stage Reference (Exposure → Weaponization → Delivery → Exploitation → Impact) that are necessary for the specific CVE. Server-side processing (exploitation stage) should be decomposed into distinct actions (e.g., parser invoked → deserialization started → gadget instantiated → code executed). Only decompose independently observable or intervenable stages; unavoidable chain reactions (e.g., recursion → stack overflow → crash) need not be split.
+- C3. Stage Progression: The path must progress logically through attack stages without unreasonable reversals. Reordering of independent actions within the same stage is acceptable. Reversals across stages (e.g., exploitation before delivery) are not acceptable.
+
+**CVE-Level Fidelity (V)**: 
+- V1. Vulnerability Characterization: The exposure action (Step 0) must correctly and thoroughly characterize the CVE. It should encode: (i) affected software/library with correct version range(s); (ii) required configuration or deployment conditions; (iii) absent security controls as negated preconditions (e.g., no WAF, no input validation, no authentication); (iv) accessible attack surface. Its effects should include exposes-attack-surface and exploit-by predicates.
+- V2. Exploitation Mechanism Fidelity: The exploitation technique must match the CVE description (e.g., deserialization, path traversal, request smuggling).
+- V3. STRIDE Goal Appropriateness: The chosen STRIDE impact category must be a valid and natural consequence of the CVE. Some CVEs can legitimately lead to multiple STRIDE outcomes; rate whether the chosen category is appropriate, not whether it is the only possible one.
+
+**Naming Convention (N)**:
+- N1. Action Naming: Action names should preferably use an actor-verb pattern with actors from {attacker, target-system, user, infrastructure}. The exposure action (Step 0) follows the fixed naming convention `system-exposes-attack-surface-to-attackers-<CVE-ID>`. Name length is not a factor — only whether the actor and operation are clearly identifiable. Alternative naming conventions are acceptable if the actor and operation remain clear.
+- N2. Predicate Naming: Predicate names should preferably be verb-based and descriptively named, clearly conveying their semantics. Name length is not a factor. Each predicate should represent a distinct concept — avoid multiple predicates encoding the same state. Alternative naming is acceptable if semantics remain clearly conveyed.
+{% endmacro %}
+
+{% macro reference_criteria() -%}
+### Reference-Comparison Criteria (compare candidate against reference)
+
+Score scale for R criteria (integer 0-5; 0-2 = major divergence from reference, 3-5 = aligned with reference):
+- 0: Completely different or unassessable.
+- 1: Fundamental divergence.
+- 2: Major divergence.
+- 3: Aligned with notable differences.
+- 4: Aligned with minor differences.
+- 5: Highly aligned.
+The reference is an example of a possible attack path, not the only viable solution. A low R score does not absolutely imply the candidate is incorrect, it may mean the candidate takes a different approach.
+
+- R1. Attack Vector Alignment: Does the candidate use the same high-level attack vector as the reference (same entry point, same exploitation class, same target component)?
+- R2. Granularity Match: Is the candidate's level of detail comparable to the reference? Consider number of actions, server-side decomposition depth, and predicate specificity, etc.
+- R3. Semantic Equivalence: Ignoring naming and structural differences, does the candidate capture the same essential attack narrative as the reference?
+- R4. Exposure Action Alignment: Does the candidate's exposure action (Step 0) structurally align with the reference's? Compare: number and coverage of negated security control preconditions, version constraint modeling, effect predicates (exposes-attack-surface, exploit-by, vulnerable-element).
+{% endmacro %}
+
+
+{% macro binary_criteria(extrinsic=False) -%}
+### Evaluation Criteria
+
+Evaluate the candidate on the following dimensions:
+1. **Feasibility**: Does each action operate within the adversarial model and correspond to a realistic attack operation?
+2. **Atomicity**: Does each action represent a single, indivisible real-world attack step with justified effects?
+3. **Completeness**: Is the attack path causally coherent with all critical intermediate steps present, progressing logically through attack stages?
+4. **CVE Fidelity**: Does the path correctly characterize the vulnerability, use the right exploitation mechanism, and achieve an appropriate STRIDE goal?
+5. **Naming Convention**: Do action and predicate names follow readable, consistent conventions with clearly identifiable actors and semantics?
+{%- if extrinsic %}
+6. **Reference Alignment**: Does the candidate capture a valid attack narrative for the same CVE? The reference is one possible correct solution, not the only one. Different attack paths, naming, or granularity are acceptable if the candidate is semantically correct.
+{%- endif %}
+{% endmacro %}
+
+
+{% macro calibration_examples(calibration_data, binary=False) -%}
+{% if calibration_data %}
+### Calibration Examples
+{% for example in calibration_data %}
+**Example {{ loop.index }}: {{ example.cve_id }} ({{ example.n_actions }} actions)**
+CVE description: {{ example.description }}
+Action signatures:
+{{ example.action_signatures }}
+{%- if binary %}
+Label: {{ example.label }}
+{%- else %}
+{# Rationale: {{ example.scores_rationale }} #}
+Scores: {% for k, v in example.scores.items() %}{{ k }}={{ v }}{% if not loop.last %}, {% endif %}{% endfor %}
+{%- endif %}
+{% endfor %}
+{%- endif %}
+{% endmacro %}
+
+{% macro binary_output_format() -%}
+The expected outcome is:
+- `True`: The attack path is correct and complete — it plausibly models the CVE exploitation.
+- `False`: The attack path is incorrect and/or incomplete — significant quality issues in any dimension.
+No explanation or extra text is required.
+{% endmacro %}
+
+{% macro scored_output_format(extrinsic=False) -%}
+Rate each criterion (integer 0-5; 0-2 = violation, 3-5 = no violation). For action-level criteria (F1, F2, A1, A2), the weakest action determines the score. Output ONLY valid JSON:
+```json
+{
+  "F1": <int>, "F2": <int>, "A1": <int>, "A2": <int>,
+  "C1": <int>, "C2": <int>, "C3": <int>,
+  "V1": <int>, "V2": <int>, "V3": <int>,
+  "N1": <int>, "N2": <int>{% if extrinsic %},
+  "R1": <int>, "R2": <int>, "R3": <int>, "R4": <int>
+{%- endif %}
+}
+```
+{% endmacro %}

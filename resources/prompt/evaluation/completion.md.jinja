@@ -1,0 +1,89 @@
+{% import "base.jinja" as macros -%}
+# PDDL Attack Path Evaluation
+
+{#- === Section 1: Role & Context === -#}
+{{ macros.evaluation_context(extrinsic=extrinsic, binary=binary) }}
+
+{#- === Section 2: Evaluation Policy === -#}
+{{ macros.evaluation_policy(extrinsic=extrinsic) }}
+
+{#- === Section 3: Background Knowledge === -#}
+{{ macros.adversarial_model() }}
+{{ macros.attack_stage_reference() }}
+
+{#- === Section 4: Evaluation Criteria === -#}
+{% if binary -%}
+{{ macros.binary_criteria(extrinsic=extrinsic) }}
+{% else -%}
+Evaluate the attack path on the following {% if extrinsic %}16{% else %}12{% endif %} criteria using a 0-5 Likert scale (0 = incoherent/absent, 1 = severe violation, 5 = fully satisfied).
+{{ macros.semantic_criteria() }}
+{% if extrinsic %}
+{{ macros.reference_criteria() }}
+{% endif %}
+{% endif -%}
+
+{#- === Section 5: Calibration Examples === -#}
+{{ macros.calibration_examples(calibration_data=calibration_data, binary=binary) }}
+
+{#- === Section 6: Few-Shot Examples (binary only) === -#}
+{% if binary and few_shots is defined -%}
+{% for example in few_shots %}
+---
+
+### CVE Description
+{{ example.cve_id }}
+{{ example.description }}
+
+{% if extrinsic -%}
+### Reference PDDL Domain (expert-authored)
+```pddl
+{{ example.domain_reference }}
+```
+{% endif -%}
+
+### Candidate PDDL Domain
+```pddl
+{{ example.domain }}
+```
+
+### Evaluation
+
+Q: Is the candidate attack path correct and complete according to the CVE description{% if extrinsic %} and the reference domain{% endif %}?
+
+A: {{ example.label }}
+{% endfor %}
+{% endif -%}
+
+{#- === Section 7: Actual Evaluation Instance === -#}
+---
+
+## CVE Description
+{{ cve_id }}
+{{ description }}
+
+{% if extrinsic -%}
+## Reference PDDL Domain (expert-authored)
+```pddl
+{{ domain_reference }}
+```
+
+{% endif -%}
+## Candidate PDDL Domain
+```pddl
+{{ domain }}
+```
+
+## Evaluation
+
+{% if binary -%}
+Q: Is the candidate attack path correct and complete according to the CVE description{% if extrinsic %} and the reference domain{% endif %}?
+
+Output ONLY valid JSON, no explanation:
+```json
+{"label": true or false}
+```
+
+A:
+{% else -%}
+{{ macros.scored_output_format(extrinsic=extrinsic) }}
+{% endif -%}
