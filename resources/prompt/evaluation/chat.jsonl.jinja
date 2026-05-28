@@ -1,9 +1,6 @@
 {% import "base.jinja" as macros -%}
 
-{#- ============================================================
-    PART 1: Build system message content
-    Same structure as completion.md.jinja sections 1-5 + output format
-    ============================================================ -#}
+{#- ============= PART 1: Build system message content =================== -#}
 
 {%- set system_parts = [] -%}
 
@@ -39,9 +36,7 @@
 {%- set system_content = system_parts | join("\n\n") -%}
 
 
-{#- ============================================================
-    PART 2: Build user message (actual evaluation instance)
-    ============================================================ -#}
+{#- ============= PART 2: Build user message (actual evaluation instance) =================== -#}
 
 {%- set user_parts = [] -%}
 {%- set _ = user_parts.append("## CVE Description\n\n" ~ cve_id ~ "\n" ~ description) -%}
@@ -57,9 +52,7 @@
 {%- set user_content = user_parts | join("\n\n") -%}
 
 
-{#- ============================================================
-    PART 3: Render JSONL output
-    ============================================================ -#}
+{#- ============= PART 3: Render JSONL output =================== -#}
 
 {%- if supports_system_message -%}
 {#- --- Format A: model supports system message --- -#}
