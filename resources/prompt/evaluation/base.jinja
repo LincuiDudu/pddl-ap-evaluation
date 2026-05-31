@@ -24,6 +24,14 @@ You are given:
 {% macro adversarial_model() -%}
 ### Adversarial Model
 The attacker is an external, unauthenticated adversary with no initial privileged access, interacting only with publicly exposed interfaces. The attacker has no prior knowledge of or access to system internals, cannot break strong cryptography, and the attack exploits exactly one CVE to achieve exactly one STRIDE goal. The attack path may include user-interaction steps (e.g., clicking a link, opening a file) when the CVE requires user interaction for exploitation (CVSS UI:Required).
+
+The attacker initially holds no predicates from the following capability categories (illustrated with example predicate forms):
+- credentials or tokens: (has-credentials), (has-password), (has-token), (has-api-key)
+- authenticated sessions: (authenticated), (session-established), (has-active-session)
+- elevated privileges: (has-elevated-privileges), (has-root-access), (is-privileged)
+- crafted artifacts: (has-crafted-payload), (has-exploit), (has-malicious-artifact)
+- system internals secrets: (knows-system-internals), (knows-secret)
+- internal network access: (has-internal-access), (can-access-internal-network)
 {% endmacro %}
 
 {% macro attack_stage_reference() -%}
@@ -50,7 +58,7 @@ Score scale (integer only, 0-2 = violation; 3-5 = no violation):
 If a criterion is violated, the maximum score is 2. If not violated, the minimum score is 3.
 
 **Action-Level Feasibility (F)** (the weakest action determines the domain-level score):
-- F1. Threat-Model Compliance: No action may assume capabilities excluded by the adversarial model or not established by prior actions.
+- F1. Threat-Model Compliance: No action may assume capabilities excluded by the adversarial model or not established by prior actions. Except for Step 0, if any action's precondition contains a predicate semantically equivalent to the forbidden capability categories above, and that predicate was not established by a prior action's effect, score F1 = 1.
 - F2. Real-World Operational Plausibility: Each action must correspond to a real-world operation, not merely a symbolic state transition. It must be expressible as a single sentence in an attack narrative.
 
 **Action-Level Atomicity (A)** (the weakest action determines the domain-level score):
