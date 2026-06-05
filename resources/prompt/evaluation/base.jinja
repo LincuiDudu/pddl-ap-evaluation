@@ -23,15 +23,15 @@ You are given:
 
 {% macro adversarial_model() -%}
 ### Adversarial Model
-The attacker is an external, unauthenticated adversary with no initial privileged access, interacting only with publicly exposed interfaces. The attacker has no prior knowledge of or access to system internals, cannot break strong cryptography, and the attack exploits exactly one CVE to achieve exactly one STRIDE goal. The attack path may include user-interaction steps (e.g., clicking a link, opening a file) when the CVE requires user interaction for exploitation (CVSS UI:Required).
+The attacker's initial position and privilege level are consistent with the CVE's attack context. The attacker has no prior knowledge of or access to system internals, cannot break strong cryptography, and the attack exploits exactly one CVE to achieve exactly one STRIDE goal. The attack path may include user-interaction steps (e.g., clicking a link, opening a file) when the CVE requires user interaction for exploitation.
 
-The attacker initially holds no predicates from the following capability categories (illustrated with example predicate forms):
+The attacker initially holds no predicates from the following capability categories beyond what the CVE's attack context grants (illustrated with example predicate forms):
 - credentials or tokens: (has-credentials), (has-password), (has-token), (has-api-key)
 - authenticated sessions: (authenticated), (session-established), (has-active-session)
 - elevated privileges: (has-elevated-privileges), (has-root-access), (is-privileged)
 - crafted artifacts: (has-crafted-payload), (has-exploit), (has-malicious-artifact)
 - system internals secrets: (knows-system-internals), (knows-secret)
-- internal network access: (has-internal-access), (can-access-internal-network)
+- internal network access: (has-internal-network-access), (can-access-internal-network)
 {% endmacro %}
 
 {% macro attack_stage_reference() -%}
@@ -58,26 +58,26 @@ Score scale (integer only, 0-2 = violation; 3-5 = no violation):
 If a criterion is violated, the maximum score is 2. If not violated, the minimum score is 3.
 
 **Action-Level Feasibility (F)** (the weakest action determines the domain-level score):
-- F1. Threat-Model Compliance: No action may assume capabilities excluded by the adversarial model or not established by prior actions. Except for Step 0, if any action's precondition contains a predicate semantically equivalent to the forbidden capability categories above, and that predicate was not established by a prior action's effect, score F1 = 1.
-- F2. Real-World Operational Plausibility: Each action must correspond to a real-world operation, not merely a symbolic state transition. It must be expressible as a single sentence in an attack narrative.
+- F1. Threat-Model Compliance: No action may assume capabilities excluded by the adversarial model or not established by prior actions. Except for Step 0, if any action's precondition contains a predicate semantically equivalent to the forbidden capability categories above, and that predicate was not established by a prior action's effect, score F1 ≤ 1.
+- F2. Real-World Operational Plausibility: Each action must correspond to a real-world operation, not merely a symbolic state transition. It must be expressible as a single sentence in an attack narrative. If an action is purely a symbolic state transition with no real-world counterpart, score F2 ≤ 1.
 
 **Action-Level Atomicity (A)** (the weakest action determines the domain-level score):
-- A1. Atomic Step Integrity: An action cannot be decomposed into smaller independent attack steps. It should be a minimal attack primitive that exists in the real world. *Clarification:* An action whose single effect enables multiple downstream actions is still atomic. An action that internally performs multiple independent operations is not.
-- A2. Effect Justification: Effects should represent capability gains that are natural consequences of executing the action given its preconditions. Effects should not introduce capabilities that have no causal relationship to the action being performed. Effects should encode state changes that downstream actions depend on.
+- A1. Atomic Step Integrity: An action cannot be decomposed into smaller independent attack steps. It should be a minimal attack primitive that exists in the real world. Clarification: An action whose single effect enables multiple downstream actions is still atomic. An action that internally performs multiple independent operations is not, score A1 ≤ 1.
+- A2. Effect Justification: Effects should represent capability gains that are natural consequences of executing the action given its preconditions. Effects should not introduce capabilities that have no causal relationship to the action being performed. Effects should encode state changes that downstream actions depend on. If an effect has no causal relationship to the action, score A2 ≤ 1.
 
 **Plan-Level Completeness (C)**:
-- C1. Causal Coherence: The attack path must be a causally coherent narrative. Every action's semantic preconditions must follow naturally from the cumulative state established by prior actions, with no implicit jumps. Prohibited implicit jumps include: network boundary traversal without established access, privilege escalation without a prior foothold, credential use without prior acquisition, artifact use without prior creation, triggering a user-interaction vulnerability without a prior user-luring step.
-- C2. Critical Step Coverage: The attack path must include all stages from the Attack Stage Reference (Exposure → Weaponization → Delivery → Exploitation → Impact) that are necessary for the specific CVE. Server-side processing (exploitation stage) should be decomposed into distinct actions (e.g., parser invoked → deserialization started → gadget instantiated → code executed). Only decompose independently observable or intervenable stages; unavoidable chain reactions (e.g., recursion → stack overflow → crash) need not be split.
-- C3. Stage Progression: The path must progress logically through attack stages without unreasonable reversals. Reordering of independent actions within the same stage is acceptable. Reversals across stages (e.g., exploitation before delivery) are not acceptable.
+- C1. Causal Coherence: The attack path must be a causally coherent narrative. Every action's semantic preconditions must follow naturally from the cumulative state established by prior actions, with no implicit jumps. Prohibited implicit jumps (beyond what the CVE's attack context grants) include: network boundary traversal without established access, privilege escalation without a prior foothold, credential use without prior acquisition, artifact use without prior creation, triggering a user-interaction vulnerability without a prior user-luring step. If any prohibited implicit jump is present, score C1 ≤ 1.
+- C2. Critical Step Coverage: The attack path must include all stages from the Attack Stage Reference (Exposure → Weaponization → Delivery → Exploitation → Impact) that are necessary for the specific CVE. Server-side processing (exploitation stage) should be decomposed into distinct actions (e.g., parser invoked → deserialization started → gadget instantiated → code executed). Only decompose independently observable or intervenable stages; unavoidable chain reactions (e.g., recursion → stack overflow → crash) need not be split. If Exposure or Impact step is missing, score C2 ≤ 1.
+- C3. Stage Progression: The path must progress logically through attack stages without unreasonable reversals. Reordering of actions within the same stage is acceptable if they have no precondition-effect dependency. Reversals across stages (e.g., exploitation before delivery) are not acceptable, score C3 ≤ 1.
 
 **CVE-Level Fidelity (V)**: 
-- V1. Vulnerability Characterization: The exposure action (Step 0) must correctly and thoroughly characterize the CVE. It should encode: (i) affected software/library with correct version range(s); (ii) required configuration or deployment conditions; (iii) absent security controls as negated preconditions (e.g., no WAF, no input validation, no authentication); (iv) accessible attack surface. Its effects should include exposes-attack-surface and exploit-by predicates.
-- V2. Exploitation Mechanism Fidelity: The exploitation technique must match the CVE description (e.g., deserialization, path traversal, request smuggling).
-- V3. STRIDE Goal Appropriateness: The chosen STRIDE impact category must be a valid and natural consequence of the CVE. Some CVEs can legitimately lead to multiple STRIDE outcomes; rate whether the chosen category is appropriate, not whether it is the only possible one.
+- V1. Vulnerability Characterization: The exposure action (Step 0) must correctly and thoroughly characterize the CVE. Its preconditions should encode decidable and observable conditions characterizing vulnerability exposure, which may include: (i) system technical composition (e.g., affected software/library, version constraints); (ii) system permissions and access paths; (iii) security controls and configurations. Its effects should convey: (a) the attack surface is exposed (e.g., (exposes-attack-surface ?Sym <CVE-ID>)), (b) the exploitation technique is identified (e.g., (exploit-by <CVE-ID> <exploit-technique>)), and where applicable, (c) the vulnerable element is specified (e.g., (vulnerable-<element> ?Xx ...)). If (a) or (b) is absent, score V1 ≤ 1.
+- V2. Exploitation Mechanism Fidelity: The exploitation technique must match the CVE description (e.g., deserialization, path traversal, request smuggling), otherwise score V2 ≤ 1.
+- V3. STRIDE Goal Appropriateness: The chosen STRIDE impact category must be a valid and natural consequence of the CVE. Some CVEs can legitimately lead to multiple STRIDE outcomes, rate whether the chosen category is appropriate, not whether it is the only possible one. If no STRIDE impact is present, score V3 ≤ 1.
 
 **Naming Convention (N)**:
-- N1. Action Naming: Action names should preferably use an actor-verb pattern with actors from {attacker, target-system, user, infrastructure}. The exposure action (Step 0) follows the fixed naming convention `system-exposes-attack-surface-to-attackers-<CVE-ID>`. Name length is not a factor — only whether the actor and operation are clearly identifiable. Alternative naming conventions are acceptable if the actor and operation remain clear.
-- N2. Predicate Naming: Predicate names should preferably be verb-based and descriptively named, clearly conveying their semantics. Name length is not a factor. Each predicate should represent a distinct concept — avoid multiple predicates encoding the same state. Alternative naming is acceptable if semantics remain clearly conveyed.
+- N1. Action Naming: Action names should preferably use an actor-verb pattern with actors from {attacker, target-system, user, infrastructure, or domain-specific infrastructure names such as reverse-proxy, dns-server}. The exposure action (Step 0) follows the fixed naming convention `system-exposes-attack-surface-to-attackers-<CVE-ID>`. Name length is not a factor, only whether the actor and operation are clearly identifiable. Alternative naming conventions are acceptable if the actor and operation remain clear. If the actor or operation cannot be identified from the action name, score N1 ≤ 2.
+- N2. Predicate Naming: Predicate names should preferably be verb-based and descriptively named, clearly conveying their semantics. Name length is not a factor. Each predicate should represent a distinct concept, avoid multiple predicates encoding the same state. Alternative naming is acceptable if semantics remain clearly conveyed. If predicate semantics cannot be understood from the name, score N2 ≤ 2.
 {% endmacro %}
 
 {% macro reference_criteria() -%}
@@ -92,10 +92,9 @@ Score scale for R criteria (integer 0-5; 0-2 = major divergence from reference, 
 - 5: Highly aligned.
 The reference is an example of a possible attack path, not the only viable solution. A low R score does not absolutely imply the candidate is incorrect, it may mean the candidate takes a different approach.
 
-- R1. Attack Vector Alignment: Does the candidate use the same high-level attack vector as the reference (same entry point, same exploitation class, same target component)?
-- R2. Granularity Match: Is the candidate's level of detail comparable to the reference? Consider number of actions, server-side decomposition depth, and predicate specificity, etc.
-- R3. Semantic Equivalence: Ignoring naming and structural differences, does the candidate capture the same essential attack narrative as the reference?
-- R4. Exposure Action Alignment: Does the candidate's exposure action (Step 0) structurally align with the reference's? Compare: number and coverage of negated security control preconditions, version constraint modeling, effect predicates (exposes-attack-surface, exploit-by, vulnerable-element).
+- R1. Attack Narrative Alignment: The candidate should capture the same attack narrative as the reference: same entry point, same exploitation technique, and same high-level progression from exposure to impact. Differences in naming, granularity, or decomposition depth should not affect this score.
+- R2. Granularity Match: The candidate's level of detail should be comparable to the reference in number of actions, server-side decomposition depth, and predicate specificity.
+- R3. Exposure Modeling Alignment: The candidate's Step 0 should reflect similar modeling decisions as the reference's in precondition characterization: (i) system technical composition (e.g., affected software/library, version constraints), (ii) permissions and access paths, (iii) security controls; and in effect coverage: (a) attack surface exposure (e.g., exposes-attack-surface), (b) exploitation technique (e.g., exploit-by), (c) vulnerable element specification where applicable (e.g., vulnerable-element). Different but individually correct modeling angles score low.
 {% endmacro %}
 
 
@@ -143,11 +142,12 @@ No explanation or extra text is required.
 Rate each criterion (integer 0-5; 0-2 = violation, 3-5 = no violation). For action-level criteria (F1, F2, A1, A2), the weakest action determines the score. Output ONLY valid JSON:
 ```json
 {
-  "F1": <int>, "F2": <int>, "A1": <int>, "A2": <int>,
+  "F1": <int>, "F2": <int>, 
+  "A1": <int>, "A2": <int>,
   "C1": <int>, "C2": <int>, "C3": <int>,
   "V1": <int>, "V2": <int>, "V3": <int>,
   "N1": <int>, "N2": <int>{% if extrinsic %},
-  "R1": <int>, "R2": <int>, "R3": <int>, "R4": <int>
+  "R1": <int>, "R2": <int>, "R3": <int>
 {%- endif %}
 }
 ```
