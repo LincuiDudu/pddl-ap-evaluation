@@ -1,2 +1,0 @@
-{"timestamp": "2026-06-03T19:17:13.255562", "source": "reference", "cve_id": "CVE-2022-40149", "ap_id": "AP2", "syntax_ok": true, "error": null, "elapsed_seconds": 30.0427, "domain_size_bytes": 11294, "n_actions": 10, "n_predicates": 1, "n_types": 34}
-{"timestamp": "2026-06-03T19:17:43.295766", "source": "bad", "cve_id": "CVE-2024-38809", "ap_id": "AP1_inject_capability_violation_rep1", "syntax_ok": true, "error": null, "elapsed_seconds": 30.0359, "domain_size_bytes": 11551, "n_actions": 10, "n_predicates": 1, "n_types": 31}
