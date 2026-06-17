@@ -533,11 +533,17 @@ def _compute_objects(
             if not has_exact_object:
                 # Need to create an object for this type
                 # Metric-FF requires at least one object per type used in predicates
-                obj_name = _make_obj_name(pred_type)
+                # If this type has children in types_map, use a child type instead
+                # (avoids ENHSP issues with parent-only types like 'file')
+                actual_type = pred_type
+                children = [t for t, p in types_map.items() if p == pred_type]
+                if children:
+                    actual_type = children[0]
+                obj_name = _make_obj_name(actual_type)
                 # Avoid duplicate object names
                 existing_names = {name for name, _ in objects}
                 if obj_name not in existing_names:
-                    objects.append((obj_name, pred_type))
+                    objects.append((obj_name, actual_type))
                     type_to_obj[pred_type] = obj_name
                     type_to_all_objs.setdefault(pred_type, []).append(obj_name)
 
