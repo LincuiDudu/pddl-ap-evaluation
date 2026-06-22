@@ -11,7 +11,7 @@ S3Eval is a three-layer automated evaluation pipeline that assesses the **S**ynt
 ```
 ├── src/cve2pddlap/          # Core Python package
 │   ├── core/                 # Data loading utilities
-│   ├── evaluation/           # S1 syntax & S2 solvability checks
+│   ├── evaluation/           # Problem PDDL generation for S1 syntax & S2 solvability check
 │   ├── llm_providers/        # LLM API clients (OpenAI, DeepSeek, Ollama, vLLM, etc.)
 │   └── utils/                # Configuration utilities
 ├── notebooks/
@@ -38,26 +38,9 @@ pip install -e .
 
 Copy `.env.example` to `.env` and add your API keys for commercial LLM evaluation.
 
-## Evaluation Pipeline
-
-| Layer | Tool | Notebook |
-|-------|------|----------|
-| S1: Syntax | ENHSP | `evaluation-S1.ipynb` |
-| S2: Solvability | Metric-FF | `evaluation-S2.ipynb` |
-| S3: Embedding (intrinsic) | Sentence Transformers | `evaluation-server-embse.ipynb` |
-| S3: Embedding (extrinsic) | Sentence Transformers | `evaluation-S3-server-embse.ipynb` |
-| S3: LLM (local) | Ollama / vLLM | `evaluation-S3-server-local-llm.ipynb` |
-| S3: LLM (GPT) | OpenAI API | `evaluation-S3-llm-gpt-*.ipynb` |
-| S3: LLM (DeepSeek-R1) | DeepSeek API | `evaluation-S3-llm-deepseek-r1.ipynb` |
-| Figures | Matplotlib | `eval-reults-figures.ipynb` |
-
 ## Results
 
 Pre-computed results for all experiments are in `results/`. See `results/README.md` for the detailed structure and file descriptions.
-
-## Dataset
-
-The evaluation dataset contains 21 CVEs with 55 expert-authored reference attack paths and 55 controlled mutated negatives (11 mutation types). One sample CVE (CVE-2023-6378) is included in `resources/data/`. The full dataset is available upon request.
 
 ## License
 
