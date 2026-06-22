@@ -21,12 +21,12 @@ S3Eval is a three-layer automated evaluation pipeline that assesses the **S**ynt
 │   ├── data/                 # PDDL-encoded attack paths (reference + mutated negatives)
 │   ├── prompt/evaluation/    # LLM scoring prompt templates & calibration data
 │   └── configs/              # Configuration files
-├── results/                  # Full experimental results (see results/README.md)
+├── results/                  # Full experimental results
 ├── tools/
 │   ├── Metric-FF/            # Metric-FF planner (S2 solvability)
 │   ├── enhsp/                # ENHSP parser (S1 syntax)
-│   └── mutator.py            # Controlled mutation operator (11 mutation types)
-└── Fig/                      # Generated figures
+│   └── mutator.py            # Controlled mutation operator
+└── Fig/                      # Paper figures (F1 scores, pass rates)
 ```
 
 ## Setup
@@ -40,7 +40,7 @@ Copy `.env.example` to `.env` and add your API keys for commercial LLM evaluatio
 
 ## Results
 
-Pre-computed results for all experiments are in `results/`. See `results/README.md` for the detailed structure and file descriptions.
+Pre-computed results for all experiments are in `results/`.
 
 ## License
 
