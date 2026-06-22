@@ -12,7 +12,7 @@ S3Eval is a three-layer automated evaluation pipeline that assesses the **S**ynt
 ├── src/cve2pddlap/          # Core Python package
 │   ├── core/                 # Data loading utilities
 │   ├── evaluation/           # Problem PDDL generation for S1 syntax & S2 solvability check
-│   ├── llm_providers/        # LLM API clients (OpenAI, DeepSeek, Ollama, vLLM, etc.)
+│   ├── llm_providers/        # LLM API clients 
 │   └── utils/                # Configuration utilities
 ├── notebooks/
 │   ├── attack_paths/         # Evaluation notebooks (S1, S2, S3)
